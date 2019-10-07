@@ -25,18 +25,6 @@ class CarouselAnimationPager(viewModel: CarouselAnimationViewModel) {
 
     //endregion
 
-    //region Setters
-    fun setNextFirstViewIndex() {
-        mCurrentFirstViewIndex++
-        validateCurrentFirstViewIndex(true)
-    }
-
-    fun setPreviousFirstViewIndex() {
-        mCurrentFirstViewIndex--
-        validateCurrentFirstViewIndex(false)
-    }
-    //endregion
-
     //region Public Methods
     fun getLastVisibleItemIndex(): Int {
         val index: Int = mCurrentFirstViewIndex + mViewsSize - 1
@@ -47,18 +35,28 @@ class CarouselAnimationPager(viewModel: CarouselAnimationViewModel) {
         }
 
     }
+
+    fun next() {
+        mCurrentFirstViewIndex++
+        validateNext()
+    }
+
+    fun previous() {
+        mCurrentFirstViewIndex--
+        validatePrevious()
+    }
     //endregion
 
     //region Private Methods
-    private fun validateCurrentFirstViewIndex(isAfterNextAction: Boolean) {
-        if (isAfterNextAction) {
-            if (mCurrentFirstViewIndex == mTotalSize) {
-                mCurrentFirstViewIndex = 0
-            }
-        } else {
-            if (mCurrentFirstViewIndex < 0) {
-                mCurrentFirstViewIndex = mTotalSize - 1
-            }
+    private fun validateNext() {
+        if (mCurrentFirstViewIndex == mTotalSize) {
+            mCurrentFirstViewIndex = 0
+        }
+    }
+
+    private fun validatePrevious() {
+        if (mCurrentFirstViewIndex < 0) {
+            mCurrentFirstViewIndex = mTotalSize - 1
         }
     }
     //endregion

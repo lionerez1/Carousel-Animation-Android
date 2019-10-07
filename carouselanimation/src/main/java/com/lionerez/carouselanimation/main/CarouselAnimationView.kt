@@ -103,7 +103,7 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
 
     override fun onNextAnimationSecondaryAnimationsCompleted() {
         val wrapper: CarouselAnimationItemViewWrapper = mAdapter.getFirstWrapper()
-        mPager.setNextFirstViewIndex()
+        mPager.next()
         val newView: View = mContract.bindView(mPager.getLastVisibleItemIndex(), wrapper.getWrappedView())
         wrapper.setWrappedView(newView)
     }
@@ -119,7 +119,7 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     override fun onPreviousAnimationStarted() {
         removeViewTouchListener()
         if (mPager.isNeedPaging()) {
-            mPager.setPreviousFirstViewIndex()
+            mPager.previous()
             val newView: View = mContract.bindView(mPager.getCurrentFirstViewIndex(), mAdapter.getLastWrapper().getWrappedView())
             val lastWrapper: CarouselAnimationItemViewWrapper = mAdapter.getLastWrapper()
             lastWrapper.setWrappedView(newView)
@@ -156,6 +156,7 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         return mViewsValues.getLastViewValues()
     }
     //endregion
+
     //endregion
 
     //region Public Methods
