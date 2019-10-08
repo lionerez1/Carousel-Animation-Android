@@ -6,6 +6,7 @@ import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.lionerez.carouselanimation.animations.secondary_scale.CarouselAnimationSecondaryViewAnimation
+import com.lionerez.carouselanimation.extensions.isGreaterThanZero
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandler
 import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandlerContract
@@ -93,7 +94,7 @@ class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View, cont
     }
 
     fun handleMoveEvent(distance: Int) {
-        if (distance < 0) {
+        if (isNextMovement(distance)) {
             handleNextMoveEvent(distance)
         } else {
             handlePreviousMoveEvent(distance)
@@ -102,7 +103,7 @@ class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View, cont
 
     fun resetMoveEventTransforms() {
         if (mAnimationValues != null) {
-            scaleY = mAnimationValues!!.getScaleX()
+            scaleY = mAnimationValues!!.getScaleY()
             rotationX = -3f
             translationY = 0f
         }
@@ -122,6 +123,10 @@ class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View, cont
     //endregion
 
     //region Private Methods
+    private fun isNextMovement(distance: Int): Boolean {
+        return !distance.isGreaterThanZero()
+    }
+
     private fun handleNextMoveEvent(distance: Int) {
         val positiveDistance: Int = abs(distance)
         if (positiveDistance in 1..100) {
@@ -133,7 +138,7 @@ class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View, cont
     }
 
     private fun handlePreviousMoveEvent(distance: Int) {
-        if (distance in 0..200) {
+        if (distance in 1..200) {
             mPreviousMovementTransformer.handleEvent(distance)
         } else {
             mContract.onPreviousAnimationStarted()

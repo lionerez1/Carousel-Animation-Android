@@ -17,7 +17,7 @@ class CarouselAnimationViewsValues(width: Int, height: Int, size: Int) {
         mHorizontalMargins = (mOriginalWidth * 0.1).toInt()
         var lastCalculatedWidth: Int = mOriginalWidth
         var lastCalculatedHeight: Int = mOriginalHeight
-        addViewAnimationValues(1f, 1f, 0f)
+        createFirstViewValues()
         for (i in 1 until mSize) {
             val results: CarouselAnimationNewValuesResult = createNewViewValues(lastCalculatedWidth, lastCalculatedHeight)
             lastCalculatedHeight = results.getNewHeight()
@@ -49,6 +49,10 @@ class CarouselAnimationViewsValues(width: Int, height: Int, size: Int) {
     //endregion
 
     //region Private Methods
+    private fun createFirstViewValues() {
+        addViewAnimationValues(1f,1f,0f)
+    }
+
     private fun createNewViewValues(lastCalculatedWidth: Int, lastCalculatedHeight: Int): CarouselAnimationNewValuesResult {
         val newWidth = lastCalculatedWidth.getNextScale()
         val newHeight = lastCalculatedHeight.getNextScale()
