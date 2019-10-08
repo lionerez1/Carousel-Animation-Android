@@ -9,3 +9,7 @@ internal fun Int.toDp(): Int {
 internal fun Int.getNextScale(): Int {
     return (this * 0.85).toInt()
 }
+
+internal fun Int.isGreaterThanZero(): Boolean {
+    return this > 0
+}

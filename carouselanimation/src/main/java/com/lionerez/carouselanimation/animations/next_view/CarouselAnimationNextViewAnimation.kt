@@ -7,11 +7,7 @@ import android.view.animation.Animation
 import com.lionerez.carouselanimation.animations.base.CarouselAnimationViewAnimation
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 
-class CarouselAnimationNextViewAnimation(
-    context: Context,
-    view: View,
-    contract: CarouselAnimationNextViewAnimationContract
-) :
+class CarouselAnimationNextViewAnimation(context: Context, view: View, contract: CarouselAnimationNextViewAnimationContract) :
     CarouselAnimationViewAnimation(context, view) {
     //region Members
     private val mScaleAnimationDelay: Long = mDuration / 4
