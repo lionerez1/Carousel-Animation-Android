@@ -46,12 +46,7 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
 
     override fun createView(index: Int): CarouselAnimationItemViewWrapper {
         val view = mContract.bindView(index, View(context))
-        val wrapper =
-            CarouselAnimationItemViewWrapper(
-                context,
-                view,
-                this
-            )
+        val wrapper = CarouselAnimationItemViewWrapper(context, view, this)
         addView(wrapper)
         return wrapper
     }
@@ -210,6 +205,16 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         }
     }
 
+    private fun startPlayingNextSecondaryAnimation() {
+        for (i in mAdapter.getWrappers().size - 1 downTo 1) {
+            val currentWrapper = mAdapter.getWrapperByPosition(i)
+            val nextScaleIndex = i - 1
+            val nextScaleModel = mViewsValues.getAnimationViewValuesByPosition(nextScaleIndex)
+            currentWrapper.playSecondaryAnimation(nextScaleModel)
+            currentWrapper.bringToFront()
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private fun setViewTouchListener() {
         val wrapper: CarouselAnimationItemViewWrapper = mAdapter.getFirstWrapper()
@@ -220,16 +225,6 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     private fun removeViewTouchListener() {
         val firstWrapper: CarouselAnimationItemViewWrapper = mAdapter.getFirstWrapper()
         firstWrapper.setOnTouchListener(null)
-    }
-
-    private fun startPlayingNextSecondaryAnimation() {
-        for (i in mAdapter.getWrappers().size - 1 downTo 1) {
-            val currentWrapper = mAdapter.getWrapperByPosition(i)
-            val nextScaleIndex = i - 1
-            val nextScaleModel = mViewsValues.getAnimationViewValuesByPosition(nextScaleIndex)
-            currentWrapper.playSecondaryAnimation(nextScaleModel)
-            currentWrapper.bringToFront()
-        }
     }
     //endregion
 
