@@ -5,6 +5,7 @@ import com.lionerez.carouselanimation.animations.next_view.CarouselAnimationNext
 import com.lionerez.carouselanimation.animations.next_view.CarouselAnimationNextViewAnimationContract
 import com.lionerez.carouselanimation.animations.previous_view.CarouselAnimationPreviousViewAnimation
 import com.lionerez.carouselanimation.animations.previous_view.CarouselAnimationPreviousViewAnimationContract
+import com.lionerez.carouselanimation.animations.secondary_scale.CarouselAnimationSecondaryViewAnimation
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapper
 
@@ -15,7 +16,6 @@ class CarouselAnimationWrapperAnimationsHandler(context: Context, view: Carousel
     private val mContext: Context = context
     private val mView: CarouselAnimationItemViewWrapper = view
     private val mContract: CarouselAnimationWrapperAnimationsHandlerContract = contract
-    private lateinit var mNextViewValues: CarouselAnimationViewValues
     //endregion
 
     //region Implementations
@@ -23,13 +23,11 @@ class CarouselAnimationWrapperAnimationsHandler(context: Context, view: Carousel
         mContract.startSecondaryAnimations(true)
     }
 
-    override fun onNextAnimationSecondStepCompleted(): CarouselAnimationViewValues {
+    override fun onNextAnimationSecondStepCompleted() {
         mContract.onNextAnimationSecondaryAnimationsCompleted()
-        return mNextViewValues
     }
 
     override fun onNextAnimationCompleted() {
-        mView.rotationX = -3f
         mContract.onAnimationDone(true)
     }
 
@@ -44,15 +42,19 @@ class CarouselAnimationWrapperAnimationsHandler(context: Context, view: Carousel
 
     //region Public Methods
     fun playNextViewAnimation(toViewScale: CarouselAnimationViewValues) {
-        mNextViewValues = toViewScale
-        val nextAnimation = CarouselAnimationNextViewAnimation(mContext, mView, this)
+        val nextAnimation = CarouselAnimationNextViewAnimation(mContext, mView, toViewScale,this)
         nextAnimation.play()
     }
 
     fun playPreviousViewAnimation(toViewScale: CarouselAnimationViewValues) {
-        mNextViewValues = toViewScale
         val previousViewAnimation = CarouselAnimationPreviousViewAnimation(mContext, mView, toViewScale, this)
         previousViewAnimation.play()
+    }
+
+    fun playSecondaryAnimation(wrapper: CarouselAnimationItemViewWrapper ,toViewScale: CarouselAnimationViewValues) {
+        val animation = CarouselAnimationSecondaryViewAnimation(mContext, wrapper, toViewScale)
+        animation.play()
+        wrapper.bringToFront()
     }
     //endregion
 }

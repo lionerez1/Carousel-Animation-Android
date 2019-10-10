@@ -2,23 +2,25 @@ package com.lionerez.carouselanimation.models
 
 import com.lionerez.carouselanimation.extensions.getNextScale
 
-class CarouselAnimationViewsValues(width: Int, height: Int, size: Int) {
+class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     //region Members
     private val mOriginalWidth: Int = width
     private val mOriginalHeight: Int = height
-    private val mViewAnimationValues: ArrayList<CarouselAnimationViewValues> = ArrayList()
-    private val mSize: Int = size
-    private val mHorizontalMargins: Int
-    private val mVerticalMargins: Int
+    val mViewAnimationValues: ArrayList<CarouselAnimationViewValues> = ArrayList()
+    private val mNumberOfViews: Int = size
+    val mHorizontalMargins: Int = (mOriginalHeight * 0.1 * mNumberOfViews).toInt()
+    val mVerticalMargins: Int = (mOriginalWidth * 0.1).toInt()
+    private val mTouchEventNextMinimumDistance: Int = 0
+    val mTouchEventNextMaximumDistance: Int = 100
+    private val mTouchEventPreviousMinimumDistance: Int = 1
+    val mTouchEventPreviousMaximumDistance: Int = 200
     //endregion
 
     init {
-        mVerticalMargins = (mOriginalHeight * 0.1 * mSize).toInt()
-        mHorizontalMargins = (mOriginalWidth * 0.1).toInt()
         var lastCalculatedWidth: Int = mOriginalWidth
         var lastCalculatedHeight: Int = mOriginalHeight
         createFirstViewValues()
-        for (i in 1 until mSize) {
+        for (i in 1 until mNumberOfViews) {
             val results: CarouselAnimationNewValuesResult = createNewViewValues(lastCalculatedWidth, lastCalculatedHeight)
             lastCalculatedHeight = results.getNewHeight()
             lastCalculatedWidth = results.getNewWidth()
@@ -26,25 +28,20 @@ class CarouselAnimationViewsValues(width: Int, height: Int, size: Int) {
     }
 
     //region Public Methods
-    fun getAnimationViewValuesByPosition(index: Int): CarouselAnimationViewValues {
-        return mViewAnimationValues[index]
-    }
-
     fun getFirstViewValues(): CarouselAnimationViewValues {
         return mViewAnimationValues[0]
     }
 
     fun getLastViewValues(): CarouselAnimationViewValues {
-        val itemIndex: Int = mViewAnimationValues.size - 1
-        return mViewAnimationValues[itemIndex]
+        return mViewAnimationValues[mViewAnimationValues.size - 1]
     }
 
-    fun getHorizontalMargins(): Int {
-        return mHorizontalMargins
+    fun isDistanceInNextMovementEventRange(distance: Int): Boolean {
+        return distance in mTouchEventNextMinimumDistance..mTouchEventNextMaximumDistance
     }
 
-    fun getVerticalMargins(): Int {
-        return mVerticalMargins
+    fun isDistanceInPreviousMovementEventRange(distance: Int): Boolean {
+        return distance in mTouchEventPreviousMinimumDistance..mTouchEventPreviousMaximumDistance
     }
     //endregion
 

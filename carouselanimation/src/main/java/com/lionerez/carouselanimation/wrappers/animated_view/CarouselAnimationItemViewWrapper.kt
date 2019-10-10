@@ -14,15 +14,11 @@ import com.lionerez.carouselanimation.transformers.CarouselAnimationNextMovement
 import com.lionerez.carouselanimation.transformers.CarouselAnimationPreviousMovementWrapperTransformer
 import kotlin.math.abs
 
-class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View, contract: CarouselAnimationItemViewWrapperContract) :
-    FrameLayout(context),
-    CarouselAnimationWrapperAnimationsHandlerContract {
+class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View) : FrameLayout(context) {
     //region Members
     private var mWrappedView: View = wrappedView
-    private val mContract: CarouselAnimationItemViewWrapperContract = contract
     private val mNextMovementTransformer: CarouselAnimationNextMovementWrapperTransformer
     private val mPreviousMovementTransformer: CarouselAnimationPreviousMovementWrapperTransformer
-    private val mAnimationsHandler: CarouselAnimationWrapperAnimationsHandler
     private var mAnimationValues: CarouselAnimationViewValues? = null
     //endregion
 
@@ -31,28 +27,6 @@ class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View, cont
         addView(mWrappedView)
         mNextMovementTransformer = CarouselAnimationNextMovementWrapperTransformer(this)
         mPreviousMovementTransformer = CarouselAnimationPreviousMovementWrapperTransformer(this)
-        mAnimationsHandler = CarouselAnimationWrapperAnimationsHandler(context, this, this)
-    }
-
-    //region Implementations
-    override fun startSecondaryAnimations(isNextAnimation: Boolean) {
-        if (isNextAnimation) {
-            mContract.startPlayingNextAnimationSecondaryAnimations()
-        } else {
-            mContract.startPlayingPreviousAnimationSecondaryAnimations()
-        }
-    }
-
-    override fun onNextAnimationSecondaryAnimationsCompleted() {
-        mContract.onNextAnimationSecondaryAnimationsCompleted()
-    }
-
-    override fun onAnimationDone(isNextAnimation: Boolean) {
-        if (isNextAnimation) {
-            mContract.onNextAnimationDone()
-        } else {
-            mContract.onPreviousAnimationDone()
-        }
     }
     //endregion
 
@@ -93,12 +67,13 @@ class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View, cont
         translationY = viewValues.getYTranslation()
     }
 
-    fun handleMoveEvent(distance: Int) {
-        if (isNextMovement(distance)) {
-            handleNextMoveEvent(distance)
-        } else {
-            handlePreviousMoveEvent(distance)
-        }
+    fun handleNextMoveEvent(distance: Int) {
+        val positiveDistance: Int = abs(distance)
+        mNextMovementTransformer.handleEvent(positiveDistance)
+    }
+
+    fun handlePreviousMoveEvent(distance: Int) {
+        mPreviousMovementTransformer.handleEvent(distance)
     }
 
     fun resetMoveEventTransforms() {
@@ -112,37 +87,6 @@ class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View, cont
     fun resetPreviousMoveEventTransforms() {
         if (mAnimationValues != null) {
             translationY = mAnimationValues!!.getYTranslation()
-        }
-    }
-
-    fun playSecondaryAnimation(toValuesModel: CarouselAnimationViewValues) {
-        mAnimationValues = toValuesModel
-        val animation = CarouselAnimationSecondaryViewAnimation(context, this, toValuesModel)
-        animation.play()
-    }
-    //endregion
-
-    //region Private Methods
-    private fun isNextMovement(distance: Int): Boolean {
-        return !distance.isGreaterThanZero()
-    }
-
-    private fun handleNextMoveEvent(distance: Int) {
-        val positiveDistance: Int = abs(distance)
-        if (positiveDistance in 1..100) {
-            mNextMovementTransformer.handleEvent(positiveDistance)
-        } else if (positiveDistance > 100) {
-            mContract.onNextAnimationStart()
-            mAnimationsHandler.playNextViewAnimation(mContract.getLastViewScaleModel())
-        }
-    }
-
-    private fun handlePreviousMoveEvent(distance: Int) {
-        if (distance in 1..200) {
-            mPreviousMovementTransformer.handleEvent(distance)
-        } else {
-            mContract.onPreviousAnimationStarted()
-            mAnimationsHandler.playPreviousViewAnimation(mContract.getFirstViewScaleModel())
         }
     }
     //endregion

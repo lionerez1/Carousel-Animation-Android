@@ -4,8 +4,8 @@ import com.lionerez.carouselanimation.main.CarouselAnimationViewModel
 
 class CarouselAnimationPager(viewModel: CarouselAnimationViewModel) {
     //region Members
-    private val mTotalSize: Int = viewModel.getSize()
-    private val mViewsSize: Int = viewModel.getNumberOfViews()
+    private val mTotalSize: Int = viewModel.mTotalSize
+    private val mViewsSize: Int = viewModel.mNumberOfViews
     private var mIsPagerNeeded: Boolean = false
     private var mCurrentFirstViewIndex = 0
     //endregion

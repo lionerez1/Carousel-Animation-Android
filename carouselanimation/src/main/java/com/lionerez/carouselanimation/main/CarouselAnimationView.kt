@@ -6,26 +6,30 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.lionerez.carouselanimation.extensions.isGreaterThanZero
 import com.lionerez.carouselanimation.extensions.toDp
+import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandler
+import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandlerContract
 import com.lionerez.carouselanimation.handlers.paging.CarouselAnimationPager
 import com.lionerez.carouselanimation.handlers.touch.CarouselAnimationViewTouchHandler
 import com.lionerez.carouselanimation.handlers.touch.CarouselAnimationViewTouchHandlerContract
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
-import com.lionerez.carouselanimation.models.CarouselAnimationViewsValues
+import com.lionerez.carouselanimation.models.CarouselAnimationValues
 import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapper
-import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapperContract
 import com.lionerez.carouselanimation.wrappers.shadow.CarouselAnimationShadowImageViewWrapper
+import kotlin.math.abs
 
 class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs),
     CarouselAnimationViewTouchHandlerContract,
-    CarouselAnimationItemViewWrapperContract {
+    CarouselAnimationWrapperAnimationsHandlerContract {
     //region Members
-    private lateinit var mContract: CarouselAnimationViewContract
     private val mViews = ArrayList<CarouselAnimationItemViewWrapper>()
-    private lateinit var mViewModel: CarouselAnimationViewModel
-    private lateinit var mViewsValues: CarouselAnimationViewsValues
+    private lateinit var mAnimationsHandler: CarouselAnimationWrapperAnimationsHandler
+    private lateinit var mContract: CarouselAnimationViewContract
     private lateinit var mPager: CarouselAnimationPager
+    private lateinit var mViewModel: CarouselAnimationViewModel
+    private lateinit var mViewsValues: CarouselAnimationValues
     private var mShadowImageView: CarouselAnimationShadowImageViewWrapper? = null
     //endregion
 
@@ -37,97 +41,53 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
 
     //region CarouselAnimationViewTouchHandlerContract
     override fun onMoved(newDistance: Int) {
-        if (newDistance < 0) {
-            val firstWrapper: CarouselAnimationItemViewWrapper = mViews[0]
-            firstWrapper.handleMoveEvent(newDistance.toDp())
-            if (mShadowImageView != null) {
-                mShadowImageView!!.handleMoveEvent(newDistance)
-            }
+        if (isNextMovement(newDistance)) {
+            val positiveDistance: Int = abs(newDistance)
+            handleNextMoveEvent(positiveDistance.toDp())
         } else {
-            val lastWrapper: CarouselAnimationItemViewWrapper = mViews[mViews.size - 1]
-            lastWrapper.handleMoveEvent(newDistance.toDp())
+            handlePreviousMoveEvent(newDistance.toDp())
         }
     }
 
     override fun onTouchEnd(lastCalculatedDistance: Int) {
-        if (lastCalculatedDistance < 0) {
-            val firstWrapper: CarouselAnimationItemViewWrapper = mViews[0]
-            firstWrapper.resetMoveEventTransforms()
+        if (isNextMovement(lastCalculatedDistance)) {
+            getFirstWrapper().resetMoveEventTransforms()
             if (mShadowImageView != null) {
                 mShadowImageView!!.resetMoveEvent()
             }
         } else {
-            val lastWrapper: CarouselAnimationItemViewWrapper = mViews[mViews.size - 1]
-            lastWrapper.resetPreviousMoveEventTransforms()
+            getLastWrapper().resetPreviousMoveEventTransforms()
         }
     }
     //endregion
 
-    //region CarouselAnimationItemViewWrapperContract
-    override fun onNextAnimationStart() {
-        removeViewTouchListener()
-        if (mShadowImageView != null) {
-            mShadowImageView!!.playAnimation()
+    //region CarouselAnimationWrapperAnimationsHandlerContract
+    override fun startSecondaryAnimations(isNextAnimation: Boolean) {
+        if (isNextAnimation) {
+            startPlayingNextSecondaryAnimation()
+        } else {
+            startPlayingPreviousSecondaryAnimation()
         }
     }
 
-    override fun startPlayingNextAnimationSecondaryAnimations() {
-        startPlayingNextSecondaryAnimation()
-    }
-
     override fun onNextAnimationSecondaryAnimationsCompleted() {
-        val wrapper: CarouselAnimationItemViewWrapper = mViews[0]
+        val wrapper: CarouselAnimationItemViewWrapper = getFirstWrapper()
         mPager.next()
         val newView: View = mContract.bindView(mPager.getLastVisibleItemIndex(), wrapper.getWrappedView())
         wrapper.setWrappedView(newView)
     }
 
-    override fun onNextAnimationDone() {
-        reOrderViewsAfterNextCompleted()
-        setViewTouchListener()
-        if (mShadowImageView != null) {
-            mShadowImageView!!.resetMoveEvent()
-        }
-    }
-
-    override fun onPreviousAnimationStarted() {
-        removeViewTouchListener()
-        if (mPager.isNeedPaging()) {
-            mPager.previous()
-            val newView: View = mContract.bindView(mPager.getCurrentFirstViewIndex(), mViews[mViews.size - 1].getWrappedView())
-            val lastWrapper: CarouselAnimationItemViewWrapper = mViews[mViews.size - 1]
-            lastWrapper.setWrappedView(newView)
-        }
-    }
-
-    override fun startPlayingPreviousAnimationSecondaryAnimations() {
-        val lastWrapper: CarouselAnimationItemViewWrapper = mViews[mViews.size - 1]
-        for (i in mViews.size - 1 downTo 0) {
-            val currentWrapper = mViews[i]
-            if (currentWrapper != lastWrapper) {
-                var nextScaleIndex = i + 1
-                if (nextScaleIndex >= mViews.size) {
-                    nextScaleIndex -= mViews.size
-                }
-                val nextScaleModel = mViewsValues.getAnimationViewValuesByPosition(nextScaleIndex)
-                currentWrapper.playSecondaryAnimation(nextScaleModel)
-                currentWrapper.bringToFront()
+    override fun onAnimationDone(isNextAnimation: Boolean) {
+        if (isNextAnimation) {
+            reOrderViewsAfterNextCompleted()
+            setViewTouchListener()
+            if (mShadowImageView != null) {
+                mShadowImageView!!.resetMoveEvent()
             }
+        } else {
+            reOrderViewsAfterPreviousCompleted()
+            setViewTouchListener()
         }
-        lastWrapper.bringToFront()
-    }
-
-    override fun onPreviousAnimationDone() {
-        reOrderViewsAfterPreviousCompleted()
-        setViewTouchListener()
-    }
-
-    override fun getFirstViewScaleModel(): CarouselAnimationViewValues {
-        return mViewsValues.getFirstViewValues()
-    }
-
-    override fun getLastViewScaleModel(): CarouselAnimationViewValues {
-        return mViewsValues.getLastViewValues()
     }
     //endregion
 
@@ -156,9 +116,9 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     }
 
     private fun createSubViews() {
-        for (i in 0 until mViewModel.getNumberOfViews()) {
+        for (i in 0 until mViewModel.mNumberOfViews) {
             val view: View = mContract.bindView(i,View(context))
-            val wrapper = CarouselAnimationItemViewWrapper(context, view, this)
+            val wrapper = CarouselAnimationItemViewWrapper(context, view)
             mViews.add(wrapper)
             addView(wrapper)
             reverseViewsOrderOnScreen()
@@ -173,29 +133,37 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         }
     }
 
+    private fun getFirstWrapper(): CarouselAnimationItemViewWrapper {
+        return mViews[0]
+    }
+
+    private fun getLastWrapper(): CarouselAnimationItemViewWrapper {
+        return mViews[mViews.size - 1]
+    }
+
     private fun handleViewReady() {
         initializeValues()
         setViewTouchListener()
-        for (i in 0 until mViewModel.getNumberOfViews()) {
-            handleItem(mViews[i], mViewsValues.getAnimationViewValuesByPosition(i))
+        for (i in 0 until mViewModel.mNumberOfViews) {
+            handleItem(mViews[i], mViewsValues.mViewAnimationValues[i])
         }
     }
 
     private fun initializeValues() {
-        val wrapper: CarouselAnimationItemViewWrapper = mViews[0]
-        mViewsValues = CarouselAnimationViewsValues(wrapper.width, wrapper.height, mViewModel.getNumberOfViews())
+        val wrapper: CarouselAnimationItemViewWrapper = getFirstWrapper()
+        mViewsValues = CarouselAnimationValues(wrapper.width, wrapper.height, mViewModel.mNumberOfViews)
     }
 
     private fun handleItem(wrapper: CarouselAnimationItemViewWrapper, valuesModel: CarouselAnimationViewValues) {
-        wrapper.setCenterConstraints(this, mViewsValues.getVerticalMargins(), mViewsValues.getHorizontalMargins())
+        wrapper.setCenterConstraints(this, mViewsValues.mVerticalMargins, mViewsValues.mHorizontalMargins)
         wrapper.setViewTransforms(valuesModel)
     }
 
     private fun createBottomShadow() {
-        val firstWrapper: CarouselAnimationItemViewWrapper = mViews[0]
+        val firstWrapper: CarouselAnimationItemViewWrapper = getFirstWrapper()
         firstWrapper.post {
             addView(mShadowImageView)
-            mShadowImageView!!.setConstraints(this, firstWrapper.id, mViewsValues.getVerticalMargins())
+            mShadowImageView!!.setConstraints(this, firstWrapper.id, mViewsValues.mVerticalMargins)
         }
     }
 
@@ -203,23 +171,81 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         for (i in mViews.size - 1 downTo 1) {
             val currentWrapper = mViews[i]
             val nextScaleIndex = i - 1
-            val nextScaleModel = mViewsValues.getAnimationViewValuesByPosition(nextScaleIndex)
-            currentWrapper.playSecondaryAnimation(nextScaleModel)
-            currentWrapper.bringToFront()
+            val nextScaleModel = mViewsValues.mViewAnimationValues[nextScaleIndex]
+            mAnimationsHandler.playSecondaryAnimation(currentWrapper, nextScaleModel)
         }
+    }
+
+    private fun startPlayingPreviousSecondaryAnimation() {
+        val lastWrapper: CarouselAnimationItemViewWrapper = getLastWrapper()
+        for (i in mViews.size - 2 downTo 0) {
+            val currentWrapper = mViews[i]
+            if (currentWrapper != lastWrapper) {
+                var nextScaleIndex = i + 1
+                if (nextScaleIndex >= mViews.size) {
+                    nextScaleIndex -= mViews.size
+                }
+                val nextScaleModel = mViewsValues.mViewAnimationValues[nextScaleIndex]
+                mAnimationsHandler.playSecondaryAnimation(currentWrapper, nextScaleModel)
+            }
+        }
+        lastWrapper.bringToFront()
+    }
+
+    private fun handleNextMoveEvent(distance: Int) {
+        if (mViewsValues.isDistanceInNextMovementEventRange(distance)) {
+            getFirstWrapper().handleNextMoveEvent(distance)
+            if (mShadowImageView != null) {
+                mShadowImageView!!.handleMoveEvent(distance)
+            }
+        } else if (distance > mViewsValues.mTouchEventNextMaximumDistance) {
+            playNextAnimation()
+        }
+    }
+
+    private fun handlePreviousMoveEvent(distance: Int) {
+        if (mViewsValues.isDistanceInPreviousMovementEventRange(distance)) {
+            getLastWrapper().handlePreviousMoveEvent(distance)
+        } else if (distance > mViewsValues.mTouchEventPreviousMaximumDistance) {
+            playPreviousAnimation()
+        }
+    }
+
+    private fun playNextAnimation() {
+        mAnimationsHandler = CarouselAnimationWrapperAnimationsHandler(context, getFirstWrapper(), this)
+        removeViewTouchListener()
+        mAnimationsHandler.playNextViewAnimation(mViewsValues.getLastViewValues())
+        if (mShadowImageView != null) {
+            mShadowImageView!!.playAnimation()
+        }
+    }
+
+    private fun playPreviousAnimation() {
+        mAnimationsHandler = CarouselAnimationWrapperAnimationsHandler(context, getLastWrapper(), this)
+        removeViewTouchListener()
+        mAnimationsHandler.playPreviousViewAnimation(mViewsValues.getFirstViewValues())
+        if (mPager.isNeedPaging()) {
+            mPager.previous()
+            val newView: View = mContract.bindView(mPager.getCurrentFirstViewIndex(), getLastWrapper().getWrappedView())
+            getLastWrapper().setWrappedView(newView)
+        }
+    }
+
+    private fun isNextMovement(distance: Int): Boolean {
+        return !distance.isGreaterThanZero()
     }
 
     private fun reOrderViewsAfterNextCompleted() {
         val lastItemIndex: Int = mViews.size - 1
-        var tempView: CarouselAnimationItemViewWrapper = mViews[0]
+        var tempView: CarouselAnimationItemViewWrapper = getFirstWrapper()
         for (i in 0 until mViews.size - 1) {
             val nextViewIndex: Int = i + 1
             val nextView: CarouselAnimationItemViewWrapper = mViews[nextViewIndex]
-            val newViewValues: CarouselAnimationViewValues = mViewsValues.getAnimationViewValuesByPosition(i)
+            val newViewValues: CarouselAnimationViewValues = mViewsValues.mViewAnimationValues[i]
             mViews[i] = nextView
             mViews[i].setViewAnimationValues(newViewValues)
             if (nextViewIndex == lastItemIndex) {
-                val nextViewNewValues: CarouselAnimationViewValues = mViewsValues.getAnimationViewValuesByPosition(i)
+                val nextViewNewValues: CarouselAnimationViewValues = mViewsValues.mViewAnimationValues[nextViewIndex]
                 mViews[nextViewIndex] = tempView
                 mViews[nextViewIndex].setViewAnimationValues(nextViewNewValues)
             }
@@ -227,15 +253,15 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     }
 
     private fun reOrderViewsAfterPreviousCompleted() {
-        val tempView: CarouselAnimationItemViewWrapper = mViews[mViews.size - 1]
+        val tempView: CarouselAnimationItemViewWrapper = getLastWrapper()
         for (i in mViews.size - 1 downTo 1) {
             val nextViewIndex: Int = i - 1
             val nextView: CarouselAnimationItemViewWrapper = mViews[nextViewIndex]
-            val newViewValues: CarouselAnimationViewValues = mViewsValues.getAnimationViewValuesByPosition(i)
+            val newViewValues: CarouselAnimationViewValues = mViewsValues.mViewAnimationValues[i]
             mViews[i] = nextView
             mViews[i].setViewAnimationValues(newViewValues)
             if (nextViewIndex == 0) {
-                val nextViewNewValues: CarouselAnimationViewValues = mViewsValues.getAnimationViewValuesByPosition(i)
+                val nextViewNewValues: CarouselAnimationViewValues = mViewsValues.mViewAnimationValues[nextViewIndex]
                 mViews[nextViewIndex] = tempView
                 mViews[nextViewIndex].setViewAnimationValues(nextViewNewValues)
             }
@@ -244,14 +270,12 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setViewTouchListener() {
-        val wrapper: CarouselAnimationItemViewWrapper = mViews[0]
-        wrapper.setOnTouchListener(CarouselAnimationViewTouchHandler(this))
+        getFirstWrapper().setOnTouchListener(CarouselAnimationViewTouchHandler(this))
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun removeViewTouchListener() {
-        val firstWrapper: CarouselAnimationItemViewWrapper = mViews[0]
-        firstWrapper.setOnTouchListener(null)
+        getFirstWrapper().setOnTouchListener(null)
     }
     //endregion
 }

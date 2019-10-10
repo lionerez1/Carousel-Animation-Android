@@ -2,6 +2,7 @@ package com.lionerez.carouselanimation.animations.base
 
 import android.content.Context
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationSet
 import com.lionerez.carouselanimation.animations.CarouselAnimationScaleAnimation
 import com.lionerez.carouselanimation.animations.CarouselAnimationXRotateAnimation
@@ -19,6 +20,7 @@ abstract class CarouselAnimationViewAnimation(context: Context, view: View) {
     protected fun createAnimationSet(): AnimationSet {
         val animationSet = AnimationSet(mContext, null)
         animationSet.fillAfter = true
+        animationSet.interpolator = AccelerateDecelerateInterpolator()
         return animationSet
     }
 

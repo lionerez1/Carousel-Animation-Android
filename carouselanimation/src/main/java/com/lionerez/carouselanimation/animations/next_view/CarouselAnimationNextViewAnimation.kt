@@ -4,14 +4,16 @@ import android.content.Context
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
+import com.lionerez.carouselanimation.animations.CarouselAnimationXRotateAnimation
 import com.lionerez.carouselanimation.animations.base.CarouselAnimationViewAnimation
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 
-class CarouselAnimationNextViewAnimation(context: Context, view: View, contract: CarouselAnimationNextViewAnimationContract) :
+class CarouselAnimationNextViewAnimation(context: Context, view: View, lastViewValues: CarouselAnimationViewValues ,contract: CarouselAnimationNextViewAnimationContract) :
     CarouselAnimationViewAnimation(context, view) {
     //region Members
-    private val mScaleAnimationDelay: Long = mDuration / 4
     private val mContract: CarouselAnimationNextViewAnimationContract = contract
+    private val mLastViewValues: CarouselAnimationViewValues = lastViewValues
+    private val mScaleAnimationDelay: Long = mDuration / 4
     private var mCurrentAnimationStep: Int = 0
     //endregion
 
@@ -46,6 +48,7 @@ class CarouselAnimationNextViewAnimation(context: Context, view: View, contract:
             1 -> playFirstAnimationStep()
             2 -> playSecondAnimationStep()
             3 -> playThirdAnimationStep()
+            4 -> playFourthAnimationStep()
         }
     }
 
@@ -58,7 +61,6 @@ class CarouselAnimationNextViewAnimation(context: Context, view: View, contract:
         animationSet.addAnimation(rotateAnimation)
         animationSet.addAnimation(scaleAnimation)
         animationSet.setAnimationListener(AnimationStepListener(::firstStepDone))
-        animationSet.interpolator = AccelerateDecelerateInterpolator()
         mView.startAnimation(animationSet)
     }
 
@@ -75,7 +77,6 @@ class CarouselAnimationNextViewAnimation(context: Context, view: View, contract:
         animationSet.addAnimation(translateAnimation)
         animationSet.addAnimation(xRotateAnimation)
         animationSet.setAnimationListener(AnimationStepListener(::secondStepDone))
-        animationSet.interpolator = AccelerateDecelerateInterpolator()
         mView.startAnimation(animationSet)
     }
 
@@ -85,18 +86,30 @@ class CarouselAnimationNextViewAnimation(context: Context, view: View, contract:
     }
 
     private fun playThirdAnimationStep() {
-        val lastViewValues: CarouselAnimationViewValues = mContract.onNextAnimationSecondStepCompleted()
+        mContract.onNextAnimationSecondStepCompleted()
         val animationSet = createAnimationSet()
-        val translateAnimation = createTranslateAnimation(lastViewValues.getYTranslation(), mDuration)
-        val scaleAnimation = createScaleAnimation(lastViewValues.getScaleX(), lastViewValues.getScaleY(), mDuration)
+        val translateAnimation = createTranslateAnimation(mLastViewValues.getYTranslation(), mDuration)
+        val scaleAnimation = createScaleAnimation(mLastViewValues.getScaleX(), mLastViewValues.getScaleY(), mDuration)
         animationSet.addAnimation(translateAnimation)
         animationSet.addAnimation(scaleAnimation)
         animationSet.setAnimationListener(AnimationStepListener(::thirdStepDone))
-        animationSet.interpolator = AccelerateDecelerateInterpolator()
         mView.startAnimation(animationSet)
     }
 
     private fun thirdStepDone() {
+        mCurrentAnimationStep++
+        playAnimationStep()
+    }
+
+    private fun playFourthAnimationStep() {
+        val animationSet = createAnimationSet()
+        val xRotationAnimation: CarouselAnimationXRotateAnimation = createXRotateAnimation(-3f, 0)
+        animationSet.addAnimation(xRotationAnimation)
+        animationSet.setAnimationListener(AnimationStepListener(::fourthStepDone))
+        mView.startAnimation(animationSet)
+    }
+
+    private fun fourthStepDone() {
         mCurrentAnimationStep = 0
         mContract.onNextAnimationCompleted()
     }

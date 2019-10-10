@@ -50,8 +50,7 @@ class CarouselAnimationPreviousViewAnimation (context: Context, view: View, toSc
 
     private fun playFirstAnimationStep() {
         val animationSet: AnimationSet = createAnimationSet()
-        val translateAnimationSet: CarouselAnimationYTranslationAnimation =
-            createTranslateAnimation(200f, mDuration)
+        val translateAnimationSet: CarouselAnimationYTranslationAnimation = createTranslateAnimation(200f, mDuration)
         val rotateAnimation = createXRotateAnimation(60f, mDuration)
         animationSet.addAnimation(translateAnimationSet)
         animationSet.addAnimation(rotateAnimation)
