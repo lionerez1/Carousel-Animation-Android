@@ -1,10 +1,9 @@
 package com.lionerez.carouselanimation.handlers.touch
 
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 
-class CarouselAnimationViewTouchHandler(contract: CarouselAnimationViewTouchHandlerContract) : View.OnTouchListener {
+internal class CarouselAnimationViewTouchHandler(contract: CarouselAnimationViewTouchHandlerContract) : View.OnTouchListener {
     //region Members
     private val mContract: CarouselAnimationViewTouchHandlerContract = contract
     private var mDistance: Float = 0f

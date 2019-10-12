@@ -1,6 +1,6 @@
 package com.lionerez.carouselanimation.handlers.touch
 
-interface CarouselAnimationViewTouchHandlerContract {
+internal interface CarouselAnimationViewTouchHandlerContract {
     fun onMoved(newDistance: Int)
 
     fun onTouchEnd(lastCalculatedDistance: Int)

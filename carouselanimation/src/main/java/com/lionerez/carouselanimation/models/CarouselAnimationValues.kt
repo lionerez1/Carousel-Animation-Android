@@ -2,7 +2,7 @@ package com.lionerez.carouselanimation.models
 
 import com.lionerez.carouselanimation.extensions.getNextScale
 
-class CarouselAnimationValues(width: Int, height: Int, size: Int) {
+internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     //region Members
     private val mOriginalWidth: Int = width
     private val mOriginalHeight: Int = height

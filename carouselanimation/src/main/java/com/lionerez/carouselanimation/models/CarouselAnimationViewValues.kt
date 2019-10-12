@@ -1,6 +1,6 @@
 package com.lionerez.carouselanimation.models
 
-class CarouselAnimationViewValues(scaleX: Float, scaleY: Float, yTranslation: Float) {
+internal class CarouselAnimationViewValues(scaleX: Float, scaleY: Float, yTranslation: Float) {
     private val mScaleX: Float = scaleX
     private val mScaleY: Float = scaleY
     private val mYTranslation: Float = yTranslation

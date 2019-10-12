@@ -6,7 +6,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.Transformation
 
-class CarouselAnimationScaleAnimation(context: Context?, attrs: AttributeSet?, view: View, toX: Float, toY: Float) : Animation(context, attrs) {
+internal class CarouselAnimationScaleAnimation(context: Context?, attrs: AttributeSet?, view: View, toX: Float, toY: Float) : Animation(context, attrs) {
     //region Members
     private val mView: View = view
     private val mViewStartingXScale = view.scaleX

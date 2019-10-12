@@ -8,7 +8,7 @@ import com.lionerez.carouselanimation.animations.CarouselAnimationXRotateAnimati
 import com.lionerez.carouselanimation.animations.base.CarouselAnimationViewAnimation
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 
-class CarouselAnimationNextViewAnimation(context: Context, view: View, lastViewValues: CarouselAnimationViewValues ,contract: CarouselAnimationNextViewAnimationContract) :
+internal class CarouselAnimationNextViewAnimation(context: Context, view: View, lastViewValues: CarouselAnimationViewValues ,contract: CarouselAnimationNextViewAnimationContract) :
     CarouselAnimationViewAnimation(context, view) {
     //region Members
     private val mContract: CarouselAnimationNextViewAnimationContract = contract

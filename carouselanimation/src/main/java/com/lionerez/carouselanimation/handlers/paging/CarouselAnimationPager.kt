@@ -2,7 +2,7 @@ package com.lionerez.carouselanimation.handlers.paging
 
 import com.lionerez.carouselanimation.main.CarouselAnimationViewModel
 
-class CarouselAnimationPager(viewModel: CarouselAnimationViewModel) {
+internal class CarouselAnimationPager(viewModel: CarouselAnimationViewModel) {
     //region Members
     private val mTotalSize: Int = viewModel.mTotalSize
     private val mViewsSize: Int = viewModel.mNumberOfViews

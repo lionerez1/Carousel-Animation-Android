@@ -9,7 +9,7 @@ import com.lionerez.carouselanimation.animations.secondary_scale.CarouselAnimati
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapper
 
-class CarouselAnimationWrapperAnimationsHandler(context: Context, view: CarouselAnimationItemViewWrapper, contract: CarouselAnimationWrapperAnimationsHandlerContract) :
+internal class CarouselAnimationWrapperAnimationsHandler(context: Context, view: CarouselAnimationItemViewWrapper, contract: CarouselAnimationWrapperAnimationsHandlerContract) :
     CarouselAnimationNextViewAnimationContract,
     CarouselAnimationPreviousViewAnimationContract {
     //region Members

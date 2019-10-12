@@ -9,7 +9,7 @@ import com.lionerez.carouselanimation.animations.CarouselAnimationXRotateAnimati
 import com.lionerez.carouselanimation.animations.CarouselAnimationXScaleAnimation
 import com.lionerez.carouselanimation.animations.CarouselAnimationYTranslationAnimation
 
-abstract class CarouselAnimationViewAnimation(context: Context, view: View) {
+internal abstract class CarouselAnimationViewAnimation(context: Context, view: View) {
     //region Members
     private val mContext: Context = context
     protected val mView: View = view

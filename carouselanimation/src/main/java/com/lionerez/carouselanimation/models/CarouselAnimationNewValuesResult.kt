@@ -1,6 +1,6 @@
 package com.lionerez.carouselanimation.models
 
-class CarouselAnimationNewValuesResult(newWidth: Int, newHeight: Int) {
+internal class CarouselAnimationNewValuesResult(newWidth: Int, newHeight: Int) {
     private val mNewWidth: Int = newWidth
     private val mNewHeight: Int = newHeight
 

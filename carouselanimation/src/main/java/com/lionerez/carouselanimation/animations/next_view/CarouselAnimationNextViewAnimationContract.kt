@@ -1,6 +1,6 @@
 package com.lionerez.carouselanimation.animations.next_view
 
-interface CarouselAnimationNextViewAnimationContract {
+internal interface CarouselAnimationNextViewAnimationContract {
 
     fun onNextAnimationFirstStepCompleted()
 

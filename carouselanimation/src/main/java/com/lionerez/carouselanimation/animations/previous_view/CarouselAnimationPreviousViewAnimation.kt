@@ -8,7 +8,7 @@ import com.lionerez.carouselanimation.animations.CarouselAnimationYTranslationAn
 import com.lionerez.carouselanimation.animations.base.CarouselAnimationViewAnimation
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 
-class CarouselAnimationPreviousViewAnimation (context: Context, view: View, toScaleModel: CarouselAnimationViewValues, contract: CarouselAnimationPreviousViewAnimationContract) : CarouselAnimationViewAnimation(context, view) {
+internal class CarouselAnimationPreviousViewAnimation (context: Context, view: View, toScaleModel: CarouselAnimationViewValues, contract: CarouselAnimationPreviousViewAnimationContract) : CarouselAnimationViewAnimation(context, view) {
     //region Members
     private val mContract: CarouselAnimationPreviousViewAnimationContract = contract
     private val mToScaleModel: CarouselAnimationViewValues = toScaleModel

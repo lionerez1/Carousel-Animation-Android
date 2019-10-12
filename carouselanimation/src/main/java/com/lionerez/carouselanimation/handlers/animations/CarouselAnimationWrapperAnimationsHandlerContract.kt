@@ -1,6 +1,6 @@
 package com.lionerez.carouselanimation.handlers.animations
 
-interface CarouselAnimationWrapperAnimationsHandlerContract {
+internal interface CarouselAnimationWrapperAnimationsHandlerContract {
 
     fun startSecondaryAnimations(isNextAnimation: Boolean)
 

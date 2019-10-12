@@ -5,7 +5,7 @@ import android.view.View
 import com.lionerez.carouselanimation.animations.base.CarouselAnimationViewAnimation
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 
-class CarouselAnimationSecondaryViewAnimation(context: Context, view: View, toScaleModel: CarouselAnimationViewValues): CarouselAnimationViewAnimation(context, view) {
+internal class CarouselAnimationSecondaryViewAnimation(context: Context, view: View, toScaleModel: CarouselAnimationViewValues): CarouselAnimationViewAnimation(context, view) {
     //region Members
     private val mToScaleModel: CarouselAnimationViewValues = toScaleModel
     //endregion

@@ -7,7 +7,7 @@ import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 
-class CarouselAnimationShadowImageViewWrapper(context: Context, wrappedView: View) : FrameLayout(context) {
+internal class CarouselAnimationShadowImageViewWrapper(context: Context, wrappedView: View) : FrameLayout(context) {
     //region Members
     private val mChild: View = wrappedView
     //endregion

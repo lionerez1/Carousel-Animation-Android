@@ -2,7 +2,7 @@ package com.lionerez.carouselanimation.transformers
 
 import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapper
 
-class CarouselAnimationYTranslationByDistanceTransformer(view: CarouselAnimationItemViewWrapper) : CarouselAnimationTransformer(view) {
+internal class CarouselAnimationYTranslationByDistanceTransformer(view: CarouselAnimationItemViewWrapper) : CarouselAnimationTransformer(view) {
     //region Members
     override val mDistanceDivider: Float get() = 1f
     //endregion

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.Transformation
 
-class CarouselAnimationXRotateAnimation(context: Context?, attrs: AttributeSet?, view: View, finalXRotate: Float) : Animation(context, attrs) {
+internal class CarouselAnimationXRotateAnimation(context: Context?, attrs: AttributeSet?, view: View, finalXRotate: Float) : Animation(context, attrs) {
     //region Members
     private val mView: View = view
     private val mViewStartingXRotation: Float = view.rotationX

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.Transformation
 
-class CarouselAnimationYTranslationAnimation(context: Context?, attrs: AttributeSet?, view: View, toY: Float) : Animation(context, attrs) {
+internal class CarouselAnimationYTranslationAnimation(context: Context?, attrs: AttributeSet?, view: View, toY: Float) : Animation(context, attrs) {
     //region Members
     private val mView: View = view
     private val mViewStartingYTranslation = view.translationY

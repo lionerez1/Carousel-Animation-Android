@@ -14,7 +14,7 @@ import com.lionerez.carouselanimation.transformers.CarouselAnimationNextMovement
 import com.lionerez.carouselanimation.transformers.CarouselAnimationPreviousMovementWrapperTransformer
 import kotlin.math.abs
 
-class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View) : FrameLayout(context) {
+internal class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View) : FrameLayout(context) {
     //region Members
     private var mWrappedView: View = wrappedView
     private val mNextMovementTransformer: CarouselAnimationNextMovementWrapperTransformer

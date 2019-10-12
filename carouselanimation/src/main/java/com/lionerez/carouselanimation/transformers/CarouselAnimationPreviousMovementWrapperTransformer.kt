@@ -2,7 +2,7 @@ package com.lionerez.carouselanimation.transformers
 
 import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapper
 
-class CarouselAnimationPreviousMovementWrapperTransformer(parent: CarouselAnimationItemViewWrapper) {
+internal class CarouselAnimationPreviousMovementWrapperTransformer(parent: CarouselAnimationItemViewWrapper) {
     //region Members
     private val mParent: CarouselAnimationItemViewWrapper = parent
     //endregion
