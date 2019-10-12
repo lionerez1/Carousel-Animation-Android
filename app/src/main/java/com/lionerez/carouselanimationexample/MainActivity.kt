@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), CarouselAnimationViewContract {
     override fun bindView(index: Int, view: View): View {
         return if (view is ExampleTestView) {
             val textView: ExampleTestView = view
-            textView.setNewPoistion(index)
+            textView.setNewPosition(index)
             textView
         } else {
             ExampleTestView(applicationContext, null, index)

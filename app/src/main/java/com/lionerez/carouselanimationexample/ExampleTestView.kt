@@ -21,7 +21,7 @@ class ExampleTestView(context: Context?, attrs: AttributeSet?, position: Int) : 
         addView(mPositionTextView)
     }
 
-    fun setNewPoistion(newPosition: Int) {
+    fun setNewPosition(newPosition: Int) {
         mPosition = newPosition
         setPositionTextView()
         setRandomBackgroundColor()
