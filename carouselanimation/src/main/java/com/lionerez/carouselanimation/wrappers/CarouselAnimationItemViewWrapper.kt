@@ -1,4 +1,4 @@
-package com.lionerez.carouselanimation.wrappers.animated_view
+package com.lionerez.carouselanimation.wrappers
 
 import android.content.Context
 import android.view.View

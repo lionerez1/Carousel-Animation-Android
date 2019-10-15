@@ -15,8 +15,8 @@ import com.lionerez.carouselanimation.handlers.touch.CarouselAnimationViewTouchH
 import com.lionerez.carouselanimation.handlers.touch.CarouselAnimationViewTouchHandlerContract
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 import com.lionerez.carouselanimation.models.CarouselAnimationValues
-import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapper
-import com.lionerez.carouselanimation.wrappers.shadow.CarouselAnimationShadowImageViewWrapper
+import com.lionerez.carouselanimation.wrappers.CarouselAnimationItemViewWrapper
+import com.lionerez.carouselanimation.wrappers.CarouselAnimationShadowImageViewWrapper
 import kotlin.math.abs
 
 class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
@@ -101,7 +101,11 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     }
 
     fun setBottomShadow(shadowView: View) {
-        mShadowImageView = CarouselAnimationShadowImageViewWrapper(context, shadowView)
+        mShadowImageView =
+            CarouselAnimationShadowImageViewWrapper(
+                context,
+                shadowView
+            )
         createBottomShadow()
     }
     //endregion
@@ -118,7 +122,10 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     private fun createSubViews() {
         for (i in 0 until mViewModel.mNumberOfViews) {
             val view: View = mContract.bindView(i,View(context))
-            val wrapper = CarouselAnimationItemViewWrapper(context, view)
+            val wrapper = CarouselAnimationItemViewWrapper(
+                context,
+                view
+            )
             mViews.add(wrapper)
             addView(wrapper)
             reverseViewsOrderOnScreen()

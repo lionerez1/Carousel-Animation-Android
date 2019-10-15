@@ -1,6 +1,6 @@
 package com.lionerez.carouselanimation.transformers
 
-import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapper
+import com.lionerez.carouselanimation.wrappers.CarouselAnimationItemViewWrapper
 
 internal class CarouselAnimationYTranslationByDistanceTransformer(view: CarouselAnimationItemViewWrapper) : CarouselAnimationTransformer(view) {
     //region Members

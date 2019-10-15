@@ -7,8 +7,7 @@ internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     private val mOriginalWidth: Int = width
     private val mOriginalHeight: Int = height
     val mViewAnimationValues: ArrayList<CarouselAnimationViewValues> = ArrayList()
-    private val mNumberOfViews: Int = size
-    val mHorizontalMargins: Int = (mOriginalHeight * 0.1 * mNumberOfViews).toInt()
+    val mHorizontalMargins: Int = (mOriginalHeight * 0.1 * size).toInt()
     val mVerticalMargins: Int = (mOriginalWidth * 0.1).toInt()
     private val mTouchEventNextMinimumDistance: Int = 0
     val mTouchEventNextMaximumDistance: Int = 100
@@ -17,14 +16,7 @@ internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     //endregion
 
     init {
-        var lastCalculatedWidth: Int = mOriginalWidth
-        var lastCalculatedHeight: Int = mOriginalHeight
-        createFirstViewValues()
-        for (i in 1 until mNumberOfViews) {
-            val results: CarouselAnimationNewValuesResult = createNewViewValues(lastCalculatedWidth, lastCalculatedHeight)
-            lastCalculatedHeight = results.getNewHeight()
-            lastCalculatedWidth = results.getNewWidth()
-        }
+        initializeModel(size)
     }
 
     //region Public Methods
@@ -46,6 +38,17 @@ internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     //endregion
 
     //region Private Methods
+    private fun initializeModel(size: Int) {
+        var lastCalculatedWidth: Int = mOriginalWidth
+        var lastCalculatedHeight: Int = mOriginalHeight
+        createFirstViewValues()
+        for (i in 1 until size) {
+            val results: CarouselAnimationNewValuesResult = createNewViewValues(lastCalculatedWidth, lastCalculatedHeight)
+            lastCalculatedHeight = results.getNewHeight()
+            lastCalculatedWidth = results.getNewWidth()
+        }
+    }
+
     private fun createFirstViewValues() {
         addViewAnimationValues(1f,1f,0f)
     }

@@ -1,6 +1,6 @@
 package com.lionerez.carouselanimation.transformers
 
-import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapper
+import com.lionerez.carouselanimation.wrappers.CarouselAnimationItemViewWrapper
 
 internal class CarouselAnimationYScaleByDistanceTransform(view: CarouselAnimationItemViewWrapper): CarouselAnimationTransformer(view) {
     override val mDistanceDivider: Float get() = 200f

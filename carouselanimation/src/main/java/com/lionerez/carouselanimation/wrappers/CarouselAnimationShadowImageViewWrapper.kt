@@ -1,4 +1,4 @@
-package com.lionerez.carouselanimation.wrappers.shadow
+package com.lionerez.carouselanimation.wrappers
 
 import android.content.Context
 import android.util.Log

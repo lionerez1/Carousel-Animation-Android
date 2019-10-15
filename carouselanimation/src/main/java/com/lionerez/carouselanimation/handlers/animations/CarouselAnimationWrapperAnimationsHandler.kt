@@ -7,7 +7,7 @@ import com.lionerez.carouselanimation.animations.previous_view.CarouselAnimation
 import com.lionerez.carouselanimation.animations.previous_view.CarouselAnimationPreviousViewAnimationContract
 import com.lionerez.carouselanimation.animations.secondary_scale.CarouselAnimationSecondaryViewAnimation
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
-import com.lionerez.carouselanimation.wrappers.animated_view.CarouselAnimationItemViewWrapper
+import com.lionerez.carouselanimation.wrappers.CarouselAnimationItemViewWrapper
 
 internal class CarouselAnimationWrapperAnimationsHandler(context: Context, view: CarouselAnimationItemViewWrapper, contract: CarouselAnimationWrapperAnimationsHandlerContract) :
     CarouselAnimationNextViewAnimationContract,
@@ -51,7 +51,7 @@ internal class CarouselAnimationWrapperAnimationsHandler(context: Context, view:
         previousViewAnimation.play()
     }
 
-    fun playSecondaryAnimation(wrapper: CarouselAnimationItemViewWrapper ,toViewScale: CarouselAnimationViewValues) {
+    fun playSecondaryAnimation(wrapper: CarouselAnimationItemViewWrapper, toViewScale: CarouselAnimationViewValues) {
         val animation = CarouselAnimationSecondaryViewAnimation(mContext, wrapper, toViewScale)
         animation.play()
         wrapper.bringToFront()
