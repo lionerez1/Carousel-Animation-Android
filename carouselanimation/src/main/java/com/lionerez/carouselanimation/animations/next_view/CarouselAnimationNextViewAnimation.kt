@@ -2,7 +2,6 @@ package com.lionerez.carouselanimation.animations.next_view
 
 import android.content.Context
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import com.lionerez.carouselanimation.animations.CarouselAnimationXRotateAnimation
 import com.lionerez.carouselanimation.animations.base.CarouselAnimationViewAnimation
@@ -56,10 +55,12 @@ internal class CarouselAnimationNextViewAnimation(context: Context, view: View, 
         val animationSet = createAnimationSet()
         val translateAnimation = createTranslateAnimation(300f, mDuration)
         val rotateAnimation = createXRotateAnimation(-120f, mDuration)
-        val scaleAnimation = createScaleXAnimation(mDuration - mScaleAnimationDelay, mScaleAnimationDelay)
+        val scaleYAnimation = createScaleYAnimation((mDuration / 2))
+        val scaleXAnimation = createScaleXAnimation(mDuration - mScaleAnimationDelay, mScaleAnimationDelay)
         animationSet.addAnimation(translateAnimation)
         animationSet.addAnimation(rotateAnimation)
-        animationSet.addAnimation(scaleAnimation)
+        animationSet.addAnimation(scaleYAnimation)
+        animationSet.addAnimation(scaleXAnimation)
         animationSet.setAnimationListener(AnimationStepListener(::firstStepDone))
         mView.startAnimation(animationSet)
     }

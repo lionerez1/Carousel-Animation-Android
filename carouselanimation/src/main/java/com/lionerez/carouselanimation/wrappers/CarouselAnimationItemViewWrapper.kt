@@ -5,44 +5,27 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import com.lionerez.carouselanimation.animations.secondary_scale.CarouselAnimationSecondaryViewAnimation
-import com.lionerez.carouselanimation.extensions.isGreaterThanZero
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
-import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandler
-import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandlerContract
-import com.lionerez.carouselanimation.transformers.CarouselAnimationNextMovementWrapperTransformer
-import com.lionerez.carouselanimation.transformers.CarouselAnimationPreviousMovementWrapperTransformer
+import com.lionerez.carouselanimation.transformers.CarouselAnimationNextMovementTransformer
+import com.lionerez.carouselanimation.transformers.CarouselAnimationPreviousMovementTransformer
 import kotlin.math.abs
 
 internal class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View) : FrameLayout(context) {
     //region Members
-    private var mWrappedView: View = wrappedView
-    private val mNextMovementTransformer: CarouselAnimationNextMovementWrapperTransformer
-    private val mPreviousMovementTransformer: CarouselAnimationPreviousMovementWrapperTransformer
+    var mWrappedView: View = wrappedView
+    private val mNextMovementTransformer: CarouselAnimationNextMovementTransformer
+    private val mPreviousMovementTransformer: CarouselAnimationPreviousMovementTransformer
     private var mAnimationValues: CarouselAnimationViewValues? = null
     //endregion
 
     init {
         id = View.generateViewId()
         addView(mWrappedView)
-        mNextMovementTransformer = CarouselAnimationNextMovementWrapperTransformer(this)
-        mPreviousMovementTransformer = CarouselAnimationPreviousMovementWrapperTransformer(this)
+        mNextMovementTransformer = CarouselAnimationNextMovementTransformer(this)
+        mPreviousMovementTransformer = CarouselAnimationPreviousMovementTransformer(this)
     }
-    //endregion
-
-    //region Getters
-    fun getWrappedView(): View {
-        return mWrappedView
-    }
-    //endregion
 
     //region Setters
-    fun setWrappedView(view: View) {
-        removeAllViews()
-        mWrappedView = view
-        addView(mWrappedView)
-    }
-
     fun setViewAnimationValues(animationValues: CarouselAnimationViewValues) {
         mAnimationValues = animationValues
     }

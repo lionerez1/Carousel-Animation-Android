@@ -1,6 +1,7 @@
 package com.lionerez.carouselanimation.models
 
 import com.lionerez.carouselanimation.extensions.getNextScale
+import kotlin.math.abs
 
 internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     //region Members
@@ -13,6 +14,7 @@ internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     val mTouchEventNextMaximumDistance: Int = 100
     private val mTouchEventPreviousMinimumDistance: Int = 1
     val mTouchEventPreviousMaximumDistance: Int = 200
+    val mSideTouchEventMaxDistance: Int = 10
     //endregion
 
     init {
@@ -34,6 +36,11 @@ internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
 
     fun isDistanceInPreviousMovementEventRange(distance: Int): Boolean {
         return distance in mTouchEventPreviousMinimumDistance..mTouchEventPreviousMaximumDistance
+    }
+
+    fun isXDistanceGreaterThanMaximum(distance: Int): Boolean {
+        val positiveDistance: Int = abs(distance)
+        return positiveDistance > mSideTouchEventMaxDistance
     }
     //endregion
 

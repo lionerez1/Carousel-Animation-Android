@@ -4,9 +4,11 @@ import android.content.Context
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationSet
+import com.lionerez.carouselanimation.animations.*
 import com.lionerez.carouselanimation.animations.CarouselAnimationScaleAnimation
 import com.lionerez.carouselanimation.animations.CarouselAnimationXRotateAnimation
 import com.lionerez.carouselanimation.animations.CarouselAnimationXScaleAnimation
+import com.lionerez.carouselanimation.animations.CarouselAnimationYScaleAnimation
 import com.lionerez.carouselanimation.animations.CarouselAnimationYTranslationAnimation
 
 internal abstract class CarouselAnimationViewAnimation(context: Context, view: View) {
@@ -51,6 +53,13 @@ internal abstract class CarouselAnimationViewAnimation(context: Context, view: V
                 null,
                 mView
             )
+        scaleAnimation.duration = duration
+        scaleAnimation.startOffset = delay
+        return scaleAnimation
+    }
+
+    protected fun createScaleYAnimation(duration: Long, delay: Long = 0): CarouselAnimationYScaleAnimation {
+        val scaleAnimation = CarouselAnimationYScaleAnimation(mContext, null, mView)
         scaleAnimation.duration = duration
         scaleAnimation.startOffset = delay
         return scaleAnimation
