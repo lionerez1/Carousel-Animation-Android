@@ -1,6 +1,5 @@
 package com.lionerez.carouselanimation.handlers.touch
 
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import kotlin.math.abs
