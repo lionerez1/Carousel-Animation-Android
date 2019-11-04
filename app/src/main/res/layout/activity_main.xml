@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <FrameLayout
+        <com.lionerez.carouselanimation.main.CarouselAnimationView
             android:id="@+id/carouselViewContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

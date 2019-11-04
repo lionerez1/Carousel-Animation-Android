@@ -8,8 +8,8 @@ internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     private val mOriginalWidth: Int = width
     private val mOriginalHeight: Int = height
     val mViewAnimationValues: ArrayList<CarouselAnimationViewValues> = ArrayList()
-    val mHorizontalMargins: Int = (mOriginalHeight * 0.1 * size).toInt()
-    val mVerticalMargins: Int = (mOriginalWidth * 0.1).toInt()
+    val mVerticalMargins: Int = (mOriginalHeight * 0.1 * size).toInt()
+    val mHorizontalMargins: Int = (mOriginalWidth * 0.1).toInt()
     private val mTouchEventNextMinimumDistance: Int = 0
     val mTouchEventNextMaximumDistance: Int = 100
     private val mTouchEventPreviousMinimumDistance: Int = 1

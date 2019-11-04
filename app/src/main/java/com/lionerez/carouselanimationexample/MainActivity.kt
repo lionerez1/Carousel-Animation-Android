@@ -32,11 +32,9 @@ class MainActivity : AppCompatActivity(), CarouselAnimationViewContract {
     }
 
     private fun createCarouselAnimationView() {
-        val carouselAnimationView = CarouselAnimationView(applicationContext, null)
         val carouselAnimationViewModel = CarouselAnimationViewModel(mNumberOfViewsInCarousel, mTotalNumberOfItemsInCarousel)
-        carouselAnimationView.initialize(carouselAnimationViewModel, this)
-        binding.carouselViewContainer.addView(carouselAnimationView)
-        createBottomShadowForCarousel(carouselAnimationView)
+        binding.carouselViewContainer.initialize(carouselAnimationViewModel, this)
+        createBottomShadowForCarousel(binding.carouselViewContainer)
     }
 
     private fun createBottomShadowForCarousel(carouselAnimationView: CarouselAnimationView) {

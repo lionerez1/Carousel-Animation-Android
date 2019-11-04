@@ -299,7 +299,7 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
 
     private fun reOrderViewsAfterNextCompleted() {
         val lastItemIndex: Int = mViews.size - 1
-        var tempView: CarouselAnimationItemViewWrapper = getFirstWrapper()
+        val tempView: CarouselAnimationItemViewWrapper = getFirstWrapper()
         for (i in 0 until mViews.size - 1) {
             val nextViewIndex: Int = i + 1
             val nextView: CarouselAnimationItemViewWrapper = mViews[nextViewIndex]
