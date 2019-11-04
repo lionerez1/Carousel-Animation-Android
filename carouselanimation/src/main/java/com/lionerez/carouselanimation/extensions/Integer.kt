@@ -6,6 +6,10 @@ internal fun Int.toDp(): Int {
     return (this / Resources.getSystem().displayMetrics.density).toInt()
 }
 
+internal fun Int.toPx(): Int {
+    return (this * Resources.getSystem().displayMetrics.density).toInt()
+}
+
 internal fun Int.getNextScale(): Int {
     return (this * 0.85).toInt()
 }

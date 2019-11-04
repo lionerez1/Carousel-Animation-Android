@@ -1,6 +1,7 @@
 package com.lionerez.carouselanimation.models
 
 import com.lionerez.carouselanimation.extensions.getNextScale
+import com.lionerez.carouselanimation.extensions.toPx
 import kotlin.math.abs
 
 internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
@@ -14,7 +15,7 @@ internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     val mTouchEventNextMaximumDistance: Int = 100
     private val mTouchEventPreviousMinimumDistance: Int = 1
     val mTouchEventPreviousMaximumDistance: Int = 200
-    val mSideTouchEventMaxDistance: Int = 10
+    val mSideTouchEventMaxDistance: Int = 100.toPx()
     //endregion
 
     init {
