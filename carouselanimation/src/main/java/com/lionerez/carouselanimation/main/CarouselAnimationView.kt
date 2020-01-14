@@ -3,11 +3,8 @@ package com.lionerez.carouselanimation.main
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.lionerez.carouselanimation.extensions.isGreaterThanZero
-import com.lionerez.carouselanimation.extensions.toDp
 import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandler
 import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandlerContract
 import com.lionerez.carouselanimation.handlers.paging.CarouselAnimationPager
@@ -17,7 +14,6 @@ import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 import com.lionerez.carouselanimation.models.CarouselAnimationValues
 import com.lionerez.carouselanimation.wrappers.CarouselAnimationItemViewWrapper
 import com.lionerez.carouselanimation.wrappers.CarouselAnimationShadowImageViewWrapper
-import kotlin.math.abs
 
 class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs),
@@ -32,7 +28,7 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     private lateinit var mViewModel: CarouselAnimationViewModel
     private lateinit var mViewsValues: CarouselAnimationValues
     private var mShadowImageView: CarouselAnimationShadowImageViewWrapper? = null
-    private var isAnimationPlaying = false
+    private var mIsAnimationPlaying = false
     private var nextAnimationsWaiting = 0
     private var previousAnimationsWaiting = 0
     //endregion
@@ -40,36 +36,54 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     //region Implementations
 
     //region CarouselAnimationViewTouchHandlerContract
-    override fun onYMoved(newDistance: Int) {
-        if (!isAnimationPlaying) {
-            if (isNextMovement(newDistance)) {
-                val positiveDistance: Int = abs(newDistance)
-                handleNextMoveEvent(positiveDistance.toDp())
+    override fun handleNextMovement(distance: Int) {
+        if (mViewsValues.isDistanceInNextMovementEventRange(distance)) {
+            getFirstWrapper().handleNextMoveEvent(distance)
+            if (mShadowImageView != null) {
+                mShadowImageView!!.handleMoveEvent(distance)
+            }
+        } else if (distance > mViewsValues.mTouchEventNextMaximumDistance) {
+            playNextAnimation()
+        }
+    }
+
+    override fun handlePreviousMovement(distance: Int) {
+        if (mViewsValues.isDistanceInPreviousMovementEventRange(distance)) {
+            getLastWrapper().handlePreviousMoveEvent(distance)
+        } else if (distance > mViewsValues.mTouchEventPreviousMaximumDistance) {
+            playPreviousAnimation()
+        }
+    }
+
+    override fun handleNextSwipe(distance: Int) {
+        if (mViewsValues.isXDistanceGreaterThanMaximum(distance)) {
+            if (mIsAnimationPlaying) {
+                nextAnimationsWaiting++
             } else {
-                handlePreviousMoveEvent(newDistance.toDp())
+                playNextAnimation()
             }
         }
     }
 
-    override fun onXMoved(newDistance: Int) {
-        if (isNextMovement(newDistance)) {
-            handleNextSwipe(newDistance)
-        } else {
-            handlePreviousSwipe(newDistance)
+    override fun handlePreviousSwipe(distance: Int) {
+        if (mViewsValues.isXDistanceGreaterThanMaximum(distance)) {
+            if (mIsAnimationPlaying) {
+                previousAnimationsWaiting++
+            } else {
+                playPreviousAnimation()
+            }
         }
     }
 
-    override fun onTouchEnd(lastCalculatedDistance: Int) {
-        if (!isAnimationPlaying) {
-            if (isNextMovement(lastCalculatedDistance)) {
-                getFirstWrapper().resetMoveEventTransforms()
-                if (mShadowImageView != null) {
-                    mShadowImageView!!.resetMoveEvent()
-                }
-            } else {
-                getLastWrapper().resetPreviousMoveEventTransforms()
-            }
+    override fun resetNextAnimation() {
+        getFirstWrapper().resetMoveEventTransforms()
+        if (mShadowImageView != null) {
+            mShadowImageView!!.resetMoveEvent()
         }
+    }
+
+    override fun resetPreviousAnimation() {
+        getLastWrapper().resetPreviousMoveEventTransforms()
     }
     //endregion
 
@@ -85,8 +99,10 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     override fun onNextAnimationSecondaryAnimationsCompleted() {
         val wrapper: CarouselAnimationItemViewWrapper = getFirstWrapper()
         mPager.next()
-        val newView: View = mContract.bindView(mPager.getLastVisibleItemIndex(), wrapper.mWrappedView)
-        wrapper.mWrappedView = newView
+        if (mPager.isNeedPaging()) {
+            val newView: View = mContract.bindView(mPager.getLastVisibleItemIndex(), wrapper.mWrappedView)
+            wrapper.mWrappedView = newView
+        }
     }
 
     override fun onAnimationDone(isNextAnimation: Boolean) {
@@ -114,6 +130,10 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
                 shadowView
             )
         createBottomShadow()
+    }
+
+    fun getFocusedViewIndex(): Int {
+        return mPager.getCurrentFirstViewIndex()
     }
     //endregion
 
@@ -177,7 +197,7 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         val firstWrapper: CarouselAnimationItemViewWrapper = getFirstWrapper()
         firstWrapper.post {
             addView(mShadowImageView)
-            mShadowImageView!!.setConstraints(this, firstWrapper.id, mViewsValues.mVerticalMargins)
+            mShadowImageView!!.setConstraints(this, firstWrapper.id, mViewsValues.mBottomShadowBottomMargin)
         }
     }
 
@@ -206,47 +226,10 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         lastWrapper.bringToFront()
     }
 
-    private fun handleNextMoveEvent(distance: Int) {
-        if (mViewsValues.isDistanceInNextMovementEventRange(distance)) {
-            getFirstWrapper().handleNextMoveEvent(distance)
-            if (mShadowImageView != null) {
-                mShadowImageView!!.handleMoveEvent(distance)
-            }
-        } else if (distance > mViewsValues.mTouchEventNextMaximumDistance) {
-            playNextAnimation()
-        }
-    }
-
-    private fun handlePreviousMoveEvent(distance: Int) {
-        if (mViewsValues.isDistanceInPreviousMovementEventRange(distance)) {
-            getLastWrapper().handlePreviousMoveEvent(distance)
-        } else if (distance > mViewsValues.mTouchEventPreviousMaximumDistance) {
-            playPreviousAnimation()
-        }
-    }
-
-    private fun handleNextSwipe(distance: Int) {
-        if (mViewsValues.isXDistanceGreaterThanMaximum(distance)) {
-            if (isAnimationPlaying) {
-                 nextAnimationsWaiting++
-            } else {
-                playNextAnimation()
-            }
-        }
-    }
-
-    private fun handlePreviousSwipe(distance: Int) {
-        if (mViewsValues.isXDistanceGreaterThanMaximum(distance)) {
-            if (isAnimationPlaying) {
-                previousAnimationsWaiting++
-            } else {
-                playPreviousAnimation()
-            }
-        }
-    }
-
     private fun playNextAnimation() {
-        isAnimationPlaying = true
+        mIsAnimationPlaying = true
+        mTouchHandler.mIsAnimationPlaying = true
+        mTouchHandler.mShouldNotifySwipe = false
         mAnimationsHandler = CarouselAnimationWrapperAnimationsHandler(context, getFirstWrapper(), this)
         mAnimationsHandler.playNextViewAnimation(mViewsValues.getLastViewValues())
         if (mShadowImageView != null) {
@@ -255,11 +238,13 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     }
 
     private fun playPreviousAnimation() {
-        isAnimationPlaying = true
+        mIsAnimationPlaying = true
+        mTouchHandler.mIsAnimationPlaying = true
+        mTouchHandler.mShouldNotifySwipe = false
         mAnimationsHandler = CarouselAnimationWrapperAnimationsHandler(context, getLastWrapper(), this)
-        mAnimationsHandler.playPreviousViewAnimation(mViewsValues.getFirstViewValues())
+        mAnimationsHandler.playPreviousViewAnimation(mViewsValues.getLastViewValues(), mViewsValues.getFirstViewValues())
+        mPager.previous()
         if (mPager.isNeedPaging()) {
-            mPager.previous()
             val newView: View = mContract.bindView(mPager.getCurrentFirstViewIndex(), getLastWrapper().mWrappedView)
             getLastWrapper().mWrappedView = newView
         }
@@ -275,10 +260,12 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
             return
         }
 
-        isAnimationPlaying = false
+        mIsAnimationPlaying = false
         if (mShadowImageView != null) {
             mShadowImageView!!.resetMoveEvent()
         }
+        notifyNewFirstPosition()
+        mTouchHandler.mIsAnimationPlaying = false
     }
 
     private fun handlePreviousAnimationDone() {
@@ -290,11 +277,9 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         if (playPreviousWaitingAnimationIfExist()) {
             return
         }
-        isAnimationPlaying = false
-    }
-
-    private fun isNextMovement(distance: Int): Boolean {
-        return !distance.isGreaterThanZero()
+        mIsAnimationPlaying = false
+        notifyNewFirstPosition()
+        mTouchHandler.mIsAnimationPlaying = false
     }
 
     private fun reOrderViewsAfterNextCompleted() {
@@ -346,6 +331,10 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
             return true
         }
         return false
+    }
+
+    private fun notifyNewFirstPosition() {
+        mContract.onFirstViewChangedPosition(mPager.getCurrentFirstViewIndex())
     }
 
     @SuppressLint("ClickableViewAccessibility")

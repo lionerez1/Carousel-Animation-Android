@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationSet
-import com.lionerez.carouselanimation.animations.*
 import com.lionerez.carouselanimation.animations.CarouselAnimationScaleAnimation
 import com.lionerez.carouselanimation.animations.CarouselAnimationXRotateAnimation
 import com.lionerez.carouselanimation.animations.CarouselAnimationXScaleAnimation
@@ -16,6 +15,7 @@ internal abstract class CarouselAnimationViewAnimation(context: Context, view: V
     private val mContext: Context = context
     protected val mView: View = view
     protected val mDuration: Long = 200
+    protected val mSecondaryDuration: Long = 400
     //endregion
 
     //region Protected Methods

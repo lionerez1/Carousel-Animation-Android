@@ -6,6 +6,7 @@ import android.view.animation.Animation
 import com.lionerez.carouselanimation.animations.CarouselAnimationXRotateAnimation
 import com.lionerez.carouselanimation.animations.base.CarouselAnimationViewAnimation
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
+import com.lionerez.carouselanimation.utils.DeviceUtils
 
 internal class CarouselAnimationNextViewAnimation(context: Context, view: View, lastViewValues: CarouselAnimationViewValues ,contract: CarouselAnimationNextViewAnimationContract) :
     CarouselAnimationViewAnimation(context, view) {
@@ -79,6 +80,7 @@ internal class CarouselAnimationNextViewAnimation(context: Context, view: View, 
         animationSet.addAnimation(xRotateAnimation)
         animationSet.setAnimationListener(AnimationStepListener(::secondStepDone))
         mView.startAnimation(animationSet)
+        mView.z = 0f
     }
 
     private fun secondStepDone() {
@@ -103,11 +105,13 @@ internal class CarouselAnimationNextViewAnimation(context: Context, view: View, 
     }
 
     private fun playFourthAnimationStep() {
-        val animationSet = createAnimationSet()
-        val xRotationAnimation: CarouselAnimationXRotateAnimation = createXRotateAnimation(-3f, 0)
-        animationSet.addAnimation(xRotationAnimation)
-        animationSet.setAnimationListener(AnimationStepListener(::fourthStepDone))
-        mView.startAnimation(animationSet)
+        if (!DeviceUtils.isHuaweiDevice()) {
+            val animationSet = createAnimationSet()
+            val xRotationAnimation: CarouselAnimationXRotateAnimation = createXRotateAnimation(-3f, 0)
+            animationSet.addAnimation(xRotationAnimation)
+            animationSet.setAnimationListener(AnimationStepListener(::fourthStepDone))
+            mView.startAnimation(animationSet)
+        }
     }
 
     private fun fourthStepDone() {

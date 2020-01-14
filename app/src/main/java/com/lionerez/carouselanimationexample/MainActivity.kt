@@ -57,5 +57,9 @@ class MainActivity : AppCompatActivity(), CarouselAnimationViewContract {
             ExampleTestView(applicationContext, null, index)
         }
     }
+
+    override fun onFirstViewChangedPosition(newPosition: Int) {
+
+    }
     //endregion
 }

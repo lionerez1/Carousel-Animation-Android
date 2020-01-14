@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 import com.lionerez.carouselanimation.transformers.CarouselAnimationNextMovementTransformer
 import com.lionerez.carouselanimation.transformers.CarouselAnimationPreviousMovementTransformer
+import com.lionerez.carouselanimation.utils.DeviceUtils
 import kotlin.math.abs
 
 internal class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View) : FrameLayout(context) {
@@ -44,7 +45,9 @@ internal class CarouselAnimationItemViewWrapper(context: Context, wrappedView: V
 
     fun setViewTransforms(viewValues: CarouselAnimationViewValues) {
         mAnimationValues = viewValues
-        rotationX = -3f
+        if (!DeviceUtils.isHuaweiDevice()) {
+            rotationX = -3f
+        }
         scaleX = viewValues.getScaleX()
         scaleY = viewValues.getScaleY()
         translationY = viewValues.getYTranslation()
@@ -62,7 +65,9 @@ internal class CarouselAnimationItemViewWrapper(context: Context, wrappedView: V
     fun resetMoveEventTransforms() {
         if (mAnimationValues != null) {
             scaleY = mAnimationValues!!.getScaleY()
-            rotationX = -3f
+            if (!DeviceUtils.isHuaweiDevice()) {
+                rotationX = -3f
+            }
             translationY = 0f
         }
     }

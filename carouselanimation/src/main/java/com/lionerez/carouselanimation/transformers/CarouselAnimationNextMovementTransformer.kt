@@ -1,5 +1,6 @@
 package com.lionerez.carouselanimation.transformers
 
+import com.lionerez.carouselanimation.utils.DeviceUtils
 import com.lionerez.carouselanimation.wrappers.CarouselAnimationItemViewWrapper
 
 internal class CarouselAnimationNextMovementTransformer(parent: CarouselAnimationItemViewWrapper) {
@@ -12,7 +13,9 @@ internal class CarouselAnimationNextMovementTransformer(parent: CarouselAnimatio
     //region Public Methods
     fun handleEvent(distance: Int) {
         setYScaleByDistance(distance)
-        setXRotationByDistance(distance)
+        if (!DeviceUtils.isHuaweiDevice()) {
+            setXRotationByDistance(distance)
+        }
         setYTranslationByDistance(distance)
     }
     //endregion

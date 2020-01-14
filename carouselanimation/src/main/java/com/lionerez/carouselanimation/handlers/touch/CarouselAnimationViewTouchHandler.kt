@@ -2,6 +2,8 @@ package com.lionerez.carouselanimation.handlers.touch
 
 import android.view.MotionEvent
 import android.view.View
+import com.lionerez.carouselanimation.extensions.isGreaterThanZero
+import com.lionerez.carouselanimation.extensions.toDp
 import kotlin.math.abs
 
 internal class CarouselAnimationViewTouchHandler(sideTouchEventMaxDistance: Int ,contract: CarouselAnimationViewTouchHandlerContract) : View.OnTouchListener {
@@ -11,7 +13,8 @@ internal class CarouselAnimationViewTouchHandler(sideTouchEventMaxDistance: Int 
     private var mXDistance: Float = 0f
     private var mStartingYPoint: Float = 0f
     private var mStartingXPoint: Float = 0f
-    private var mShouldNotifySwipe = true
+    var mShouldNotifySwipe = true
+    var mIsAnimationPlaying = false
     private val mSideTouchEventMaxDistance: Int = sideTouchEventMaxDistance
     //endregion
 
@@ -26,12 +29,22 @@ internal class CarouselAnimationViewTouchHandler(sideTouchEventMaxDistance: Int 
     private fun handleMoveAction(event: MotionEvent) {
         mYDistance = mStartingYPoint - event.y
         mXDistance = mStartingXPoint - event.x
-        mContract.onYMoved(mYDistance.toInt())
+        notifyYDistanceIfNeeded()
         notifyXDistanceIfNeeded()
     }
 
     private fun stopTracking() {
-        mContract.onTouchEnd(mYDistance.toInt())
+        if (isNextMovement(mYDistance.toInt())) {
+            mContract.resetNextAnimation()
+        } else {
+            mContract.resetPreviousAnimation()
+        }
+    }
+
+    private fun notifyYDistanceIfNeeded() {
+        if (mShouldNotifySwipe) {
+            handleYMovement(mYDistance.toInt())
+        }
     }
 
     private fun notifyXDistanceIfNeeded() {
@@ -42,9 +55,32 @@ internal class CarouselAnimationViewTouchHandler(sideTouchEventMaxDistance: Int 
                 if (xPositiveDistance > mSideTouchEventMaxDistance) {
                     mShouldNotifySwipe = false
                 }
-                mContract.onXMoved(mXDistance.toInt())
+                handleXMovement(mXDistance.toInt())
             }
         }
+    }
+
+    private fun handleYMovement(distance: Int) {
+        if (!mIsAnimationPlaying) {
+            if (isNextMovement(distance)) {
+                val positiveDistance: Int = abs(distance)
+                mContract.handleNextMovement(positiveDistance.toDp())
+            } else {
+                mContract.handlePreviousMovement(distance.toDp())
+            }
+        }
+    }
+
+    private fun handleXMovement(distance: Int) {
+        if (isNextMovement(distance)) {
+            mContract.handleNextSwipe(distance)
+        } else {
+            mContract.handlePreviousSwipe(distance)
+        }
+    }
+
+    private fun isNextMovement(distance: Int): Boolean {
+        return !distance.isGreaterThanZero()
     }
     //endregion
 

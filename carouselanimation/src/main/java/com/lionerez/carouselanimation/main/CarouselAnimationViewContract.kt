@@ -4,4 +4,6 @@ import android.view.View
 
 interface CarouselAnimationViewContract {
     fun bindView(index: Int, view: View) : View
+
+    fun onFirstViewChangedPosition(newPosition: Int)
 }

@@ -6,12 +6,12 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import com.lionerez.carouselanimation.animations.CarouselAnimationYTranslationAnimation
 import com.lionerez.carouselanimation.animations.base.CarouselAnimationViewAnimation
-import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
+import com.lionerez.carouselanimation.utils.DeviceUtils
 
-internal class CarouselAnimationPreviousViewAnimation (context: Context, view: View, toScaleModel: CarouselAnimationViewValues, contract: CarouselAnimationPreviousViewAnimationContract) : CarouselAnimationViewAnimation(context, view) {
+internal class CarouselAnimationPreviousViewAnimation (context: Context, view: View, model: CarouselAnimationPreviousViewAnimationModel, contract: CarouselAnimationPreviousViewAnimationContract) : CarouselAnimationViewAnimation(context, view) {
     //region Members
     private val mContract: CarouselAnimationPreviousViewAnimationContract = contract
-    private val mToScaleModel: CarouselAnimationViewValues = toScaleModel
+    private val mModel: CarouselAnimationPreviousViewAnimationModel = model
     private var mCurrentAnimationStep: Int = 0
     //endregion
 
@@ -44,23 +44,27 @@ internal class CarouselAnimationPreviousViewAnimation (context: Context, view: V
         when (mCurrentAnimationStep) {
             1 -> playFirstAnimationStep()
             2 -> playSecondAnimationStep()
-            3 -> playThirdAnimationStep()
         }
     }
 
     private fun playFirstAnimationStep() {
+        mView.z = -50f
         val animationSet: AnimationSet = createAnimationSet()
-        val translateAnimationSet: CarouselAnimationYTranslationAnimation = createTranslateAnimation(200f, mDuration)
-        val rotateAnimation = createXRotateAnimation(60f, mDuration)
+        val translateAnimationSet: CarouselAnimationYTranslationAnimation = createTranslateAnimation(500f, mSecondaryDuration)
+        val scale = createScaleAnimation(0.7f, 0.4f, mSecondaryDuration)
         animationSet.addAnimation(translateAnimationSet)
-        animationSet.addAnimation(rotateAnimation)
+        if (!DeviceUtils.isHuaweiDevice()) {
+            val rotateAnimation = createXRotateAnimation(-50f, mSecondaryDuration)
+            animationSet.addAnimation(rotateAnimation)
+        }
+        animationSet.addAnimation(scale)
         animationSet.setAnimationListener(AnimationStepListener(::firstStepCompleted))
         mView.startAnimation(animationSet)
     }
 
     private fun firstStepCompleted() {
-        mView.bringToFront()
         mContract.onPreviousAnimationFirstStepCompleted()
+        mView.z = 40f
         mCurrentAnimationStep++
         playAnimationStep()
     }
@@ -69,30 +73,19 @@ internal class CarouselAnimationPreviousViewAnimation (context: Context, view: V
         val animationSet: AnimationSet = createAnimationSet()
         val translateAnimationSet: CarouselAnimationYTranslationAnimation =
             createTranslateAnimation(0f, mDuration)
-        val rotateAnimation = createXRotateAnimation(177f, mDuration)
         val scaleAnimation =
-            createScaleAnimation(mToScaleModel.getScaleX(), mToScaleModel.getScaleY(), mDuration)
+            createScaleAnimation(mModel.mToScaleModel.getScaleX(), mModel.mToScaleModel.getScaleY(), mDuration)
         animationSet.addAnimation(translateAnimationSet)
-        animationSet.addAnimation(rotateAnimation)
+        if (!DeviceUtils.isHuaweiDevice()) {
+            val rotateAnimation = createXRotateAnimation(-3f, mDuration)
+            animationSet.addAnimation(rotateAnimation)
+        }
         animationSet.addAnimation(scaleAnimation)
         animationSet.setAnimationListener(AnimationStepListener(::secondStepCompleted))
         mView.startAnimation(animationSet)
     }
 
     private fun secondStepCompleted() {
-        mCurrentAnimationStep++
-        playAnimationStep()
-    }
-
-    private fun playThirdAnimationStep() {
-        val animationSet: AnimationSet = createAnimationSet()
-        val rotateAnimation = createXRotateAnimation(-3f, 0)
-        animationSet.addAnimation(rotateAnimation)
-        animationSet.setAnimationListener(AnimationStepListener(::thirdStepCompleted))
-        mView.startAnimation(animationSet)
-    }
-
-    private fun thirdStepCompleted() {
         mCurrentAnimationStep = 0
         mContract.onPreviousAnimationCompleted()
     }

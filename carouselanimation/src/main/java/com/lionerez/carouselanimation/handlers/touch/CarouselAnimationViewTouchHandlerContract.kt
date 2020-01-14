@@ -1,9 +1,15 @@
 package com.lionerez.carouselanimation.handlers.touch
 
 internal interface CarouselAnimationViewTouchHandlerContract {
-    fun onYMoved(newDistance: Int)
+    fun handleNextMovement(distance: Int)
 
-    fun onXMoved(newDistance: Int)
+    fun handlePreviousMovement(distance: Int)
 
-    fun onTouchEnd(lastCalculatedDistance: Int)
+    fun handleNextSwipe(distance: Int)
+
+    fun handlePreviousSwipe(distance: Int)
+
+    fun resetNextAnimation()
+
+    fun resetPreviousAnimation()
 }

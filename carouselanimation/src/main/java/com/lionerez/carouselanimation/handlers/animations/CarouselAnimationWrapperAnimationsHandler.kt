@@ -5,6 +5,7 @@ import com.lionerez.carouselanimation.animations.next_view.CarouselAnimationNext
 import com.lionerez.carouselanimation.animations.next_view.CarouselAnimationNextViewAnimationContract
 import com.lionerez.carouselanimation.animations.previous_view.CarouselAnimationPreviousViewAnimation
 import com.lionerez.carouselanimation.animations.previous_view.CarouselAnimationPreviousViewAnimationContract
+import com.lionerez.carouselanimation.animations.previous_view.CarouselAnimationPreviousViewAnimationModel
 import com.lionerez.carouselanimation.animations.secondary_scale.CarouselAnimationSecondaryViewAnimation
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 import com.lionerez.carouselanimation.wrappers.CarouselAnimationItemViewWrapper
@@ -46,8 +47,9 @@ internal class CarouselAnimationWrapperAnimationsHandler(context: Context, view:
         nextAnimation.play()
     }
 
-    fun playPreviousViewAnimation(toViewScale: CarouselAnimationViewValues) {
-        val previousViewAnimation = CarouselAnimationPreviousViewAnimation(mContext, mView, toViewScale, this)
+    fun playPreviousViewAnimation(currentViewScale: CarouselAnimationViewValues ,toViewScale: CarouselAnimationViewValues) {
+        val previousAnimationModel = CarouselAnimationPreviousViewAnimationModel(currentViewScale, toViewScale);
+        val previousViewAnimation = CarouselAnimationPreviousViewAnimation(mContext, mView, previousAnimationModel, this)
         previousViewAnimation.play()
     }
 
