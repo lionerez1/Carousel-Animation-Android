@@ -2,11 +2,11 @@ package com.lionerez.carouselanimationexample
 
 import android.content.Context
 import android.graphics.Color
+import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.lionerez.carouselanimation.extensions.toPx
 import kotlin.random.Random
 

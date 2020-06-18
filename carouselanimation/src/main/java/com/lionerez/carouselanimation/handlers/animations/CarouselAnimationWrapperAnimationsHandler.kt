@@ -1,6 +1,7 @@
 package com.lionerez.carouselanimation.handlers.animations
 
 import android.content.Context
+import android.util.Log
 import com.lionerez.carouselanimation.animations.next_view.CarouselAnimationNextViewAnimation
 import com.lionerez.carouselanimation.animations.next_view.CarouselAnimationNextViewAnimationContract
 import com.lionerez.carouselanimation.animations.previous_view.CarouselAnimationPreviousViewAnimation
@@ -43,6 +44,9 @@ internal class CarouselAnimationWrapperAnimationsHandler(context: Context, view:
 
     //region Public Methods
     fun playNextViewAnimation(toViewScale: CarouselAnimationViewValues) {
+        Log.v("liolog", "next animation x scale value = ${toViewScale.getScaleX()}")
+        Log.v("liolog", "next animation y scale value = ${toViewScale.getScaleY()}")
+        Log.v("liolog", "next animation transaction value = ${toViewScale.getYTranslation()}")
         val nextAnimation = CarouselAnimationNextViewAnimation(mContext, mView, toViewScale,this)
         nextAnimation.play()
     }

@@ -1,17 +1,19 @@
 package com.lionerez.carouselanimation.wrappers
 
 import android.content.Context
+import android.support.constraint.ConstraintLayout
+import android.support.constraint.ConstraintSet
 import android.view.View
 import android.widget.FrameLayout
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
+
 import com.lionerez.carouselanimation.models.CarouselAnimationViewValues
 import com.lionerez.carouselanimation.transformers.CarouselAnimationNextMovementTransformer
 import com.lionerez.carouselanimation.transformers.CarouselAnimationPreviousMovementTransformer
 import com.lionerez.carouselanimation.utils.DeviceUtils
 import kotlin.math.abs
 
-internal class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View) : FrameLayout(context) {
+internal class CarouselAnimationItemViewWrapper(context: Context, wrappedView: View) :
+    FrameLayout(context) {
     //region Members
     var mWrappedView: View = wrappedView
     private val mNextMovementTransformer: CarouselAnimationNextMovementTransformer
@@ -33,21 +35,47 @@ internal class CarouselAnimationItemViewWrapper(context: Context, wrappedView: V
     //endregion
 
     //region Public Methods
-    fun setCenterConstraints(parent: ConstraintLayout, marginsVertical: Int, marginsHorizontal: Int) {
+    fun setCenterConstraints(
+        parent: ConstraintLayout,
+        marginsVertical: Int,
+        marginsHorizontal: Int
+    ) {
         val constraintSet = ConstraintSet()
         constraintSet.clone(parent)
-        constraintSet.connect(id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, marginsVertical)
-        constraintSet.connect(id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, marginsVertical)
-        constraintSet.connect(id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, marginsHorizontal)
-        constraintSet.connect(id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, marginsHorizontal)
+        constraintSet.connect(
+            id,
+            ConstraintSet.TOP,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.TOP,
+            marginsVertical
+        )
+        constraintSet.connect(
+            id,
+            ConstraintSet.BOTTOM,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.BOTTOM,
+            marginsVertical
+        )
+        constraintSet.connect(
+            id,
+            ConstraintSet.LEFT,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.LEFT,
+            marginsHorizontal
+        )
+        constraintSet.connect(
+            id,
+            ConstraintSet.RIGHT,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.RIGHT,
+            marginsHorizontal
+        )
         constraintSet.applyTo(parent)
     }
 
     fun setViewTransforms(viewValues: CarouselAnimationViewValues) {
         mAnimationValues = viewValues
-        if (!DeviceUtils.isHuaweiDevice()) {
-            rotationX = -3f
-        }
+        rotationX = -3f
         scaleX = viewValues.getScaleX()
         scaleY = viewValues.getScaleY()
         translationY = viewValues.getYTranslation()
@@ -65,9 +93,7 @@ internal class CarouselAnimationItemViewWrapper(context: Context, wrappedView: V
     fun resetMoveEventTransforms() {
         if (mAnimationValues != null) {
             scaleY = mAnimationValues!!.getScaleY()
-            if (!DeviceUtils.isHuaweiDevice()) {
-                rotationX = -3f
-            }
+            rotationX = -3f
             translationY = 0f
         }
     }

@@ -1,5 +1,6 @@
 package com.lionerez.carouselanimation.handlers.touch
 
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.lionerez.carouselanimation.extensions.isGreaterThanZero
@@ -24,16 +25,19 @@ internal class CarouselAnimationViewTouchHandler(sideTouchEventMaxDistance: Int 
         mStartingYPoint = event.y
         mStartingXPoint = event.x
         mShouldNotifySwipe = true
+        Log.v("liolog", "start tracking with values y = ${mStartingYPoint} and x = ${mStartingXPoint}");
     }
 
     private fun handleMoveAction(event: MotionEvent) {
         mYDistance = mStartingYPoint - event.y
         mXDistance = mStartingXPoint - event.x
+        Log.v("liolog", "new y distace = ${mYDistance}")
         notifyYDistanceIfNeeded()
         notifyXDistanceIfNeeded()
     }
 
     private fun stopTracking() {
+        Log.v("liolog", "stop tracking");
         if (isNextMovement(mYDistance.toInt())) {
             mContract.resetNextAnimation()
         } else {
@@ -42,6 +46,7 @@ internal class CarouselAnimationViewTouchHandler(sideTouchEventMaxDistance: Int 
     }
 
     private fun notifyYDistanceIfNeeded() {
+        Log.v("liolog", "should notify swipe = ${mShouldNotifySwipe}")
         if (mShouldNotifySwipe) {
             handleYMovement(mYDistance.toInt())
         }
@@ -61,6 +66,7 @@ internal class CarouselAnimationViewTouchHandler(sideTouchEventMaxDistance: Int 
     }
 
     private fun handleYMovement(distance: Int) {
+        Log.v("liolog", "is animation playing = ${mIsAnimationPlaying}")
         if (!mIsAnimationPlaying) {
             if (isNextMovement(distance)) {
                 val positiveDistance: Int = abs(distance)
@@ -75,7 +81,8 @@ internal class CarouselAnimationViewTouchHandler(sideTouchEventMaxDistance: Int 
         if (isNextMovement(distance)) {
             mContract.handleNextSwipe(distance)
         } else {
-            mContract.handlePreviousSwipe(distance)
+//            Log.v("liolog", "previous animation called");
+//            mContract.handlePreviousSwipe(distance)
         }
     }
 

@@ -8,7 +8,12 @@ import com.lionerez.carouselanimation.animations.CarouselAnimationYTranslationAn
 import com.lionerez.carouselanimation.animations.base.CarouselAnimationViewAnimation
 import com.lionerez.carouselanimation.utils.DeviceUtils
 
-internal class CarouselAnimationPreviousViewAnimation (context: Context, view: View, model: CarouselAnimationPreviousViewAnimationModel, contract: CarouselAnimationPreviousViewAnimationContract) : CarouselAnimationViewAnimation(context, view) {
+internal class CarouselAnimationPreviousViewAnimation(
+    context: Context,
+    view: View,
+    model: CarouselAnimationPreviousViewAnimationModel,
+    contract: CarouselAnimationPreviousViewAnimationContract
+) : CarouselAnimationViewAnimation(context, view) {
     //region Members
     private val mContract: CarouselAnimationPreviousViewAnimationContract = contract
     private val mModel: CarouselAnimationPreviousViewAnimationModel = model
@@ -28,7 +33,6 @@ internal class CarouselAnimationPreviousViewAnimation (context: Context, view: V
 
         override fun onAnimationStart(p0: Animation?) {
         }
-
     }
     //endregion
 
@@ -50,13 +54,12 @@ internal class CarouselAnimationPreviousViewAnimation (context: Context, view: V
     private fun playFirstAnimationStep() {
         mView.z = -50f
         val animationSet: AnimationSet = createAnimationSet()
-        val translateAnimationSet: CarouselAnimationYTranslationAnimation = createTranslateAnimation(500f, mSecondaryDuration)
+        val translateAnimationSet: CarouselAnimationYTranslationAnimation =
+            createTranslateAnimation(500f, mSecondaryDuration)
         val scale = createScaleAnimation(0.7f, 0.4f, mSecondaryDuration)
         animationSet.addAnimation(translateAnimationSet)
-        if (!DeviceUtils.isHuaweiDevice()) {
-            val rotateAnimation = createXRotateAnimation(-50f, mSecondaryDuration)
-            animationSet.addAnimation(rotateAnimation)
-        }
+        val rotateAnimation = createXRotateAnimation(-50f, mSecondaryDuration)
+        animationSet.addAnimation(rotateAnimation)
         animationSet.addAnimation(scale)
         animationSet.setAnimationListener(AnimationStepListener(::firstStepCompleted))
         mView.startAnimation(animationSet)
@@ -74,12 +77,14 @@ internal class CarouselAnimationPreviousViewAnimation (context: Context, view: V
         val translateAnimationSet: CarouselAnimationYTranslationAnimation =
             createTranslateAnimation(0f, mDuration)
         val scaleAnimation =
-            createScaleAnimation(mModel.mToScaleModel.getScaleX(), mModel.mToScaleModel.getScaleY(), mDuration)
+            createScaleAnimation(
+                mModel.mToScaleModel.getScaleX(),
+                mModel.mToScaleModel.getScaleY(),
+                mDuration
+            )
         animationSet.addAnimation(translateAnimationSet)
-        if (!DeviceUtils.isHuaweiDevice()) {
-            val rotateAnimation = createXRotateAnimation(-3f, mDuration)
-            animationSet.addAnimation(rotateAnimation)
-        }
+        val rotateAnimation = createXRotateAnimation(-3f, mDuration)
+        animationSet.addAnimation(rotateAnimation)
         animationSet.addAnimation(scaleAnimation)
         animationSet.setAnimationListener(AnimationStepListener(::secondStepCompleted))
         mView.startAnimation(animationSet)

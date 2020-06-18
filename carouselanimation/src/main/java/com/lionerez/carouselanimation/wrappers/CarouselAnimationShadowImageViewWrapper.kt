@@ -1,11 +1,10 @@
 package com.lionerez.carouselanimation.wrappers
 
 import android.content.Context
-import android.util.Log
+import android.support.constraint.ConstraintLayout
+import android.support.constraint.ConstraintSet
 import android.view.View
 import android.widget.FrameLayout
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 
 internal class CarouselAnimationShadowImageViewWrapper(context: Context, wrappedView: View) : FrameLayout(context) {
     //region Members

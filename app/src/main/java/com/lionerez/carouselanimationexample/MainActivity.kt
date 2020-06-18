@@ -1,11 +1,12 @@
 package com.lionerez.carouselanimationexample
 
+import android.databinding.DataBindingUtil
 import android.graphics.drawable.Drawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.ImageView
-import androidx.databinding.DataBindingUtil
+
 import com.lionerez.carouselanimation.main.CarouselAnimationView
 import com.lionerez.carouselanimation.main.CarouselAnimationViewContract
 import com.lionerez.carouselanimation.main.CarouselAnimationViewModel

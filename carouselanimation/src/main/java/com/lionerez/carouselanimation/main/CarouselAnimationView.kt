@@ -2,9 +2,11 @@ package com.lionerez.carouselanimation.main
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
-import androidx.constraintlayout.widget.ConstraintLayout
+
 import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandler
 import com.lionerez.carouselanimation.handlers.animations.CarouselAnimationWrapperAnimationsHandlerContract
 import com.lionerez.carouselanimation.handlers.paging.CarouselAnimationPager
@@ -38,11 +40,14 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     //region CarouselAnimationViewTouchHandlerContract
     override fun handleNextMovement(distance: Int) {
         if (mViewsValues.isDistanceInNextMovementEventRange(distance)) {
+            Log.v("liolog", "distance in range")
+            Log.v("liolog", "first wrapper id = ${getFirstWrapper().id}")
             getFirstWrapper().handleNextMoveEvent(distance)
             if (mShadowImageView != null) {
                 mShadowImageView!!.handleMoveEvent(distance)
             }
         } else if (distance > mViewsValues.mTouchEventNextMaximumDistance) {
+            Log.v("liolog", "next animation starts")
             playNextAnimation()
         }
     }
@@ -57,9 +62,12 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
 
     override fun handleNextSwipe(distance: Int) {
         if (mViewsValues.isXDistanceGreaterThanMaximum(distance)) {
+            Log.v("liolog", "x distance greater than zero")
             if (mIsAnimationPlaying) {
+                Log.v("liolog", "animation playing, adding to waiting")
                 nextAnimationsWaiting++
             } else {
+                Log.v("liolog", "starting next animation")
                 playNextAnimation()
             }
         }
@@ -100,7 +108,8 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         val wrapper: CarouselAnimationItemViewWrapper = getFirstWrapper()
         mPager.next()
         if (mPager.isNeedPaging()) {
-            val newView: View = mContract.bindView(mPager.getLastVisibleItemIndex(), wrapper.mWrappedView)
+            val newView: View =
+                mContract.bindView(mPager.getLastVisibleItemIndex(), wrapper.mWrappedView)
             wrapper.mWrappedView = newView
         }
     }
@@ -141,14 +150,16 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
     private fun init() {
         mPager = CarouselAnimationPager(mViewModel)
         createSubViews()
+        visibility = View.INVISIBLE
         post {
             handleViewReady()
+            visibility = View.VISIBLE
         }
     }
 
     private fun createSubViews() {
         for (i in 0 until mViewModel.mNumberOfViews) {
-            val view: View = mContract.bindView(i,View(context))
+            val view: View = mContract.bindView(i, View(context))
             val wrapper = CarouselAnimationItemViewWrapper(
                 context,
                 view
@@ -185,11 +196,19 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
 
     private fun initializeValues() {
         val wrapper: CarouselAnimationItemViewWrapper = getFirstWrapper()
-        mViewsValues = CarouselAnimationValues(wrapper.width, wrapper.height, mViewModel.mNumberOfViews)
+        mViewsValues =
+            CarouselAnimationValues(wrapper.width, wrapper.height, mViewModel.mNumberOfViews)
     }
 
-    private fun handleItem(wrapper: CarouselAnimationItemViewWrapper, valuesModel: CarouselAnimationViewValues) {
-        wrapper.setCenterConstraints(this, mViewsValues.mVerticalMargins, mViewsValues.mHorizontalMargins)
+    private fun handleItem(
+        wrapper: CarouselAnimationItemViewWrapper,
+        valuesModel: CarouselAnimationViewValues
+    ) {
+        wrapper.setCenterConstraints(
+            this,
+            mViewsValues.mVerticalMargins,
+            mViewsValues.mHorizontalMargins
+        )
         wrapper.setViewTransforms(valuesModel)
     }
 
@@ -197,7 +216,11 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         val firstWrapper: CarouselAnimationItemViewWrapper = getFirstWrapper()
         firstWrapper.post {
             addView(mShadowImageView)
-            mShadowImageView!!.setConstraints(this, firstWrapper.id, mViewsValues.mBottomShadowBottomMargin)
+            mShadowImageView!!.setConstraints(
+                this,
+                firstWrapper.id,
+                mViewsValues.mBottomShadowBottomMargin
+            )
         }
     }
 
@@ -230,7 +253,8 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         mIsAnimationPlaying = true
         mTouchHandler.mIsAnimationPlaying = true
         mTouchHandler.mShouldNotifySwipe = false
-        mAnimationsHandler = CarouselAnimationWrapperAnimationsHandler(context, getFirstWrapper(), this)
+        mAnimationsHandler =
+            CarouselAnimationWrapperAnimationsHandler(context, getFirstWrapper(), this)
         mAnimationsHandler.playNextViewAnimation(mViewsValues.getLastViewValues())
         if (mShadowImageView != null) {
             mShadowImageView!!.playAnimation()
@@ -241,11 +265,16 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         mIsAnimationPlaying = true
         mTouchHandler.mIsAnimationPlaying = true
         mTouchHandler.mShouldNotifySwipe = false
-        mAnimationsHandler = CarouselAnimationWrapperAnimationsHandler(context, getLastWrapper(), this)
-        mAnimationsHandler.playPreviousViewAnimation(mViewsValues.getLastViewValues(), mViewsValues.getFirstViewValues())
+        mAnimationsHandler =
+            CarouselAnimationWrapperAnimationsHandler(context, getLastWrapper(), this)
+        mAnimationsHandler.playPreviousViewAnimation(
+            mViewsValues.getLastViewValues(),
+            mViewsValues.getFirstViewValues()
+        )
         mPager.previous()
         if (mPager.isNeedPaging()) {
-            val newView: View = mContract.bindView(mPager.getCurrentFirstViewIndex(), getLastWrapper().mWrappedView)
+            val newView: View =
+                mContract.bindView(mPager.getCurrentFirstViewIndex(), getLastWrapper().mWrappedView)
             getLastWrapper().mWrappedView = newView
         }
     }
@@ -266,6 +295,7 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
         }
         notifyNewFirstPosition()
         mTouchHandler.mIsAnimationPlaying = false
+        Log.v("liolog", "next animation end and new is animation playing value = ${mTouchHandler.mIsAnimationPlaying}")
     }
 
     private fun handlePreviousAnimationDone() {
@@ -292,7 +322,8 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
             mViews[i] = nextView
             mViews[i].setViewAnimationValues(newViewValues)
             if (nextViewIndex == lastItemIndex) {
-                val nextViewNewValues: CarouselAnimationViewValues = mViewsValues.mViewAnimationValues[nextViewIndex]
+                val nextViewNewValues: CarouselAnimationViewValues =
+                    mViewsValues.mViewAnimationValues[nextViewIndex]
                 mViews[nextViewIndex] = tempView
                 mViews[nextViewIndex].setViewAnimationValues(nextViewNewValues)
             }
@@ -308,7 +339,8 @@ class CarouselAnimationView(context: Context?, attrs: AttributeSet?) :
             mViews[i] = nextView
             mViews[i].setViewAnimationValues(newViewValues)
             if (nextViewIndex == 0) {
-                val nextViewNewValues: CarouselAnimationViewValues = mViewsValues.mViewAnimationValues[nextViewIndex]
+                val nextViewNewValues: CarouselAnimationViewValues =
+                    mViewsValues.mViewAnimationValues[nextViewIndex]
                 mViews[nextViewIndex] = tempView
                 mViews[nextViewIndex].setViewAnimationValues(nextViewNewValues)
             }

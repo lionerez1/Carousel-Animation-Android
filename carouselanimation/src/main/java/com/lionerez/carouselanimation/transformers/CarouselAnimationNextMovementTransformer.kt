@@ -7,15 +7,14 @@ internal class CarouselAnimationNextMovementTransformer(parent: CarouselAnimatio
     //region Members
     private val mYScaleTransformer = CarouselAnimationYScaleByDistanceTransform(parent)
     private val mXRotationTransformer = CarouselAnimationXRotationByDistanceTransformer(parent)
-    private val mYTranslationTransformer = CarouselAnimationYTranslationByDistanceTransformer(parent)
+    private val mYTranslationTransformer =
+        CarouselAnimationYTranslationByDistanceTransformer(parent)
     //endregion
 
     //region Public Methods
     fun handleEvent(distance: Int) {
         setYScaleByDistance(distance)
-        if (!DeviceUtils.isHuaweiDevice()) {
-            setXRotationByDistance(distance)
-        }
+        setXRotationByDistance(distance)
         setYTranslationByDistance(distance)
     }
     //endregion

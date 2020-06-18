@@ -14,10 +14,10 @@ internal class CarouselAnimationValues(width: Int, height: Int, size: Int) {
     val mVerticalMargins: Int = mVerticalMarginUnit * size
     val mHorizontalMargins: Int = (mOriginalWidth * 0.1).toInt()
     private val mTouchEventNextMinimumDistance: Int = 0
-    val mTouchEventNextMaximumDistance: Int = 100
+    val mTouchEventNextMaximumDistance: Int = (mOriginalHeight * 0.1).toInt()
     private val mTouchEventPreviousMinimumDistance: Int = 1
-    val mTouchEventPreviousMaximumDistance: Int = 200
-    val mSideTouchEventMaxDistance: Int = 100.toPx()
+    val mTouchEventPreviousMaximumDistance: Int = (mOriginalHeight * 0.1).toInt()
+    val mSideTouchEventMaxDistance: Int = (mOriginalWidth * 0.1).toInt()
     //endregion
 
     init {
